@@ -18,14 +18,16 @@ public class JCalculator implements ActionListener
     JFrame frame;
     JPanel keypad;
     JLabel screen;
-    JButton operator[];
-    JButton operand;
+    JButton[] operator = new JButton[6];
+    JButton[] operand = new JButton[10];
+
+    
     
     JCalculator() 
     {
         // Create a new frame.
         frame = new JFrame("Calculator");
-        frame.setSize(250,300);
+        frame.setSize(250,300);        
 
         // Terminate program when user clicks close button.
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -37,23 +39,54 @@ public class JCalculator implements ActionListener
         screen = new JLabel(" ");
         screen.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 
+        // Create operand buttons.
+        
+
+        // Create operator buttons.
+        operator[0] = new JButton("/");
+        operator[1] = new JButton("x");
+        operator[2] = new JButton("-");
+        operator[3] = new JButton("c");
+        operator[4] = new JButton("=");
+        operator[5] = new JButton("+");
+
+        for(int i = 0; i < 6; i++)
+        {
+            operator[i].addActionListener(this);
+        }
+
+        for(int i = 0; i < 10; i++)
+        {
+            operand[i] = new JButton(String.valueOf(i));
+            operand[i].addActionListener(this);
+        }
+
         // Create JPanel for keypad buttons.
         JPanel keypad = new JPanel();
         keypad.setLayout(new GridLayout(4,4));
 
-        char[] btnLabels = {'7','8','9','/',
-                            '4','5','6','X',
-                            '1','2','3','-',
-                            '0','C','=','+'};
+        // Add operand and operator buttons to JPanel.
+        keypad.add(operand[7]);
+        keypad.add(operand[8]);
+        keypad.add(operand[9]);
+        keypad.add(operator[0]);
 
-         // Creating JButtons using for-loop and adding to JPanel.
-         for(int i = 0; i < 16; i++)
-         {
-            JButton operand = new JButton("" + btnLabels[i]);
-            keypad.add(operand); 
-            operand.addActionListener(this);
-         }
-         
+        keypad.add(operand[4]);
+        keypad.add(operand[5]);
+        keypad.add(operand[6]);
+        keypad.add(operator[1]);
+
+        keypad.add(operand[1]);
+        keypad.add(operand[2]);
+        keypad.add(operand[3]);
+        keypad.add(operator[2]);
+
+        keypad.add(operand[0]);
+        keypad.add(operator[3]);
+        keypad.add(operator[4]);
+        keypad.add(operator[5]);
+        
+
         // Add components to content pane.
         frame.add(screen, BorderLayout.NORTH);
         frame.add(keypad, BorderLayout.CENTER);
@@ -67,7 +100,7 @@ public class JCalculator implements ActionListener
 
     public void actionPerformed(ActionEvent ae)
 	{
-        System.out.println(ae.getActionCommand());	
+        
     }
 
     public static void main(String args[]) 
@@ -83,4 +116,3 @@ public class JCalculator implements ActionListener
 		});
 	}
 }
-//Teset
