@@ -8,9 +8,9 @@
  *      Implementing an application that previews a phrase after font, style, or effects are added.
  */
 
- import java.awt.*;
- import java.awt.event.*;
- import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -20,6 +20,7 @@ import javax.swing.event.ListSelectionListener;
     private JScrollBar horzScroll;
     private JScrollPane fontScroll;
     private JList<String> fontList;
+    private JLabel phrase;
     
     JFontViewer()
     {
@@ -38,36 +39,59 @@ import javax.swing.event.ListSelectionListener;
         top.add(horzScroll);
 
 
-        // Create JPanel for Fonts.
+        // Create JLabel for text to be changed.
+        JLabel text = new JLabel("the quick brown fox jumps over the lazy dog 0123456789");
+
+
+        //Create JPanel for Fonts.
         JPanel left = new JPanel(new GridLayout(0,1));
         JLabel fonts = new JLabel("Fonts: ");
         fontList = new JList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
 
+        left.add(fonts);
+        left.add(fontList);
+
         // Set single-selection mode and selection listener for fontList.
-        fontList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        fontList.setPreferredSize(new Dimension(120,90));
-        fontList.addListSelectionListener((new ListSelectionListener() 
-        {
-            public void valueChanged(ListSelectionEvent le)
-            {
-                int index = fontList.getSelectedIndex();
-            }
-        }));
+        
 
 
 
         // Create JPanel for Style.
+        JPanel center = new JPanel(new GridLayout(0,1));
+        JLabel style = new JLabel("Style: ");
+        JRadioButton regular = new JRadioButton("Regular", true);
+        JRadioButton italic = new JRadioButton("Italic");
+        JRadioButton bold = new JRadioButton("Bold");
+        ButtonGroup styleType = new ButtonGroup();
+
+        styleType.add(regular);
+        styleType.add(italic);
+        styleType.add(bold);
+        center.add(style);
+        center.add(regular);
+        center.add(italic);
+        center.add(bold);
+
+
 
 
         // Create JPanel for Effects.
+        JPanel right = new JPanel(new GridLayout(0,1));
+        JLabel effects = new JLabel("Effects: ");
+        JCheckBox allCaps = new JCheckBox("All caps", false);
+        ButtonGroup rightBtnGrp = new ButtonGroup();
 
-
-        // Create JLabel for text to be chnaged.
-        JLabel phrase = new JLabel("the quick brown fox jumps over the lazy dog 0123456789");
+        rightBtnGrp.add(allCaps);
+        right.add(effects);
+        right.add(allCaps);
 
 
         // Add components to content pane.
+        frame.add(text, BorderLayout.SOUTH);
         frame.add(top, BorderLayout.NORTH);
+        frame.add(left, BorderLayout.WEST);
+        frame.add(center, BorderLayout.CENTER);
+        frame.add(right, BorderLayout.EAST);
 
 
         frame.setVisible(true);
