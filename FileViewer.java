@@ -38,7 +38,7 @@
         file.setMnemonic(KeyEvent.VK_F);
 
         JMenuItem exit = new JMenuItem("Exit");
-        exit.setMnemonic(KeyEvent.VK_E);
+        exit.setMnemonic(KeyEvent.VK_X);
         exit.addActionListener(ae -> System.exit(0)); // Exit program when clicked.
         
         file.add(exit); // Add component to content pane.
