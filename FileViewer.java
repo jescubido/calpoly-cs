@@ -7,7 +7,7 @@
      * Description:
      *          A Swing application that edits the contents of a file. 
      */
-    
+
     import java.awt.*;
     import java.awt.event.*;
     import java.io.*;
