@@ -1,6 +1,6 @@
 /**
  * Name:        Escubido, Jarisse
- * Homework:    1 (15)
+ * Homework:    #1 (15)
  * Due:         Wednesday March 22, 2023
  * Course:      cs-2450-01-sp23
  * 
@@ -31,35 +31,37 @@ public class JavaViewer
         {
             public void windowClosing(WindowEvent e)
             {
+                // Create popup that asks user for confirmation on exiting application.
                 int result = JOptionPane.showConfirmDialog(frame, "Are you sure you want to exit?",
                 "Select an Option", JOptionPane.YES_NO_OPTION);
                 
                 switch(result)
                 {
-                    case JOptionPane.YES_OPTION:
+                    case JOptionPane.YES_OPTION: // If YES is pressed, popup and application closes.
                         System.exit(0);
                         break;
-                    case JOptionPane.NO_OPTION:
+                    case JOptionPane.NO_OPTION: // If NO is pressed, applicatin does not close.
                         break;
                 }
             }
         });
 
         text = new JTextArea();
-        text.setEditable(false);
         text.setFont(new Font("Courier New", Font.PLAIN, 12));
         text.setForeground(Color.WHITE);
         text.setBackground(Color.BLUE);
+
 
         JMenuBar menuBar = new JMenuBar(); // Create a menu bar.
 
         JMenu fileMenu = new JMenu("File"); // Create File Menu; contains Open and Exit MenuItems.
         JMenu helpMenu = new JMenu("Help"); // Create Help Menu; contains About MenuItem.
 
-        // Components and MenuItems for fileMenu Menu
+        // Components and MenuItems for fileMenu Menu.
         fileMenu.setMnemonic(KeyEvent.VK_F);
         JMenuItem openMenuItem = new JMenuItem("Open", KeyEvent.VK_O);
         openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+
 
         JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
         exitMenuItem.addActionListener((ae) ->
@@ -80,10 +82,36 @@ public class JavaViewer
         // Components and MenuItems for helpMenu Menu.
         helpMenu.setMnemonic(KeyEvent.VK_H);
         JMenuItem aboutMenuItem = new JMenuItem("About", KeyEvent.VK_A);
+        aboutMenuItem.addActionListener((ae) ->
+        {
+            Icon icon = new ImageIcon("JavaViewer.png");
+            JOptionPane.showMessageDialog(frame, "<html>JavaViewer v0.1<br>Copyright (c) J. Escubido<html>",
+                 "About", JOptionPane.PLAIN_MESSAGE, icon);
+        });
 
-        helpMenu.add(aboutMenuItem);
+        helpMenu.add(aboutMenuItem); // Add aboutMenuItem to helpMenu.
 
-       
+        // Create popup menu for copy
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem copyMenuItem = new JMenuItem("Copy");
+
+        frame.getContentPane().addMouseListener(new MouseAdapter() 
+        {
+            public void mousePressed(MouseEvent me)
+            {
+                popupMenu.show(me.getComponent(), me.getX(), me.getY());
+            }
+            public void mouseReleased(MouseEvent me)
+            {
+                if(me.isPopupTrigger())
+                    popupMenu.show(me.getComponent(), me.getX(), me.getY());
+            }
+        });
+        
+
+        popupMenu.add(copyMenuItem);
+
+       // Add Menus to menuBar.
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
         frame.setJMenuBar(menuBar);
