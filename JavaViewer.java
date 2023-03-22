@@ -9,20 +9,41 @@
  *              and display it using the text area component.
  */
 
+import javax.swing.filechooser.FileFilter;
 import javax.swing.*;
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 
+// Custom file filter that displays Java source files and directories.
+class JavaFileFilter extends FileFilter
+{
+    public boolean accept(File file)
+    {
+        if (file.getName().endsWith(".java")) return true;
+        if (file.isDirectory()) return true;
+
+        return false;
+    }
+
+    public String getDescription()
+    {
+        return "Java Source Code Files";
+    }
+}
+
 public class JavaViewer
 {
     // global veriables
     static private JTextArea text;
+    private JFileChooser fileChooser;
+    static private int result;
+
 
     JavaViewer()
     {
         JFrame frame = new JFrame("JavaViewer");
-        frame.setSize(400, 200);
+        frame.setSize(800, 500);
         frame.setIconImage(new ImageIcon("JavaViewer.png").getImage());
 
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -47,6 +68,8 @@ public class JavaViewer
         });
 
         text = new JTextArea();
+        text.setEditable(false);
+        text.setLineWrap(true);
         text.setFont(new Font("Courier New", Font.PLAIN, 12));
         text.setForeground(Color.WHITE);
         text.setBackground(Color.BLUE);
@@ -61,12 +84,26 @@ public class JavaViewer
         fileMenu.setMnemonic(KeyEvent.VK_F);
         JMenuItem openMenuItem = new JMenuItem("Open", KeyEvent.VK_O);
         openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+        
+        
+        fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new JavaFileFilter());
+        openMenuItem.addActionListener((ae) ->
+        {
+            int result = fileChooser.showOpenDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION)
+                text.setText("Selected file is: " + fileChooser.getSelectedFile().getName());
+            else
+                text.setText("No file selected.");
+        });
+        
+        
 
 
         JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
         exitMenuItem.addActionListener((ae) ->
         {
-            int result = JOptionPane.showConfirmDialog(frame, "Are you sure you want to exit?",
+            result = JOptionPane.showConfirmDialog(frame, "Are you sure you want to exit?",
                 "Select an Option", JOptionPane.YES_NO_OPTION);
             if (result == JOptionPane.YES_OPTION)
             {
@@ -95,7 +132,7 @@ public class JavaViewer
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem copyMenuItem = new JMenuItem("Copy");
 
-        frame.getContentPane().addMouseListener(new MouseAdapter() 
+        text.addMouseListener(new MouseAdapter() 
         {
             public void mousePressed(MouseEvent me)
             {
@@ -107,6 +144,7 @@ public class JavaViewer
                     popupMenu.show(me.getComponent(), me.getX(), me.getY());
             }
         });
+
         
 
         popupMenu.add(copyMenuItem);
@@ -115,6 +153,7 @@ public class JavaViewer
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
         frame.setJMenuBar(menuBar);
+        frame.add(text);
 
         // Add components to content pane.
         frame.setVisible(true);
@@ -124,5 +163,6 @@ public class JavaViewer
     public static void main(String[] args)
     {
         SwingUtilities.invokeLater(() -> new JavaViewer());
+        System.out.println(result);
     }
 }
