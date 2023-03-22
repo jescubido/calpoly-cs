@@ -35,7 +35,7 @@ class JavaFileFilter extends FileFilter
 public class JavaViewer
 {
     // global veriables
-    static private JTextArea text;
+    static private JTextArea textArea;
     private JFileChooser fileChooser;
     static private int result;
 
@@ -43,7 +43,7 @@ public class JavaViewer
     JavaViewer()
     {
         JFrame frame = new JFrame("JavaViewer");
-        frame.setSize(800, 500);
+        frame.setSize(500, 300);
         frame.setIconImage(new ImageIcon("JavaViewer.png").getImage());
 
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -67,12 +67,12 @@ public class JavaViewer
             }
         });
 
-        text = new JTextArea();
-        text.setEditable(false);
-        text.setLineWrap(true);
-        text.setFont(new Font("Courier New", Font.PLAIN, 12));
-        text.setForeground(Color.WHITE);
-        text.setBackground(Color.BLUE);
+        textArea = new JTextArea(); // Create a TextArea where source file will be displayed.
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setFont(new Font("Courier New", Font.PLAIN, 12));
+        textArea.setForeground(Color.WHITE);
+        textArea.setBackground(Color.BLUE);
 
 
         JMenuBar menuBar = new JMenuBar(); // Create a menu bar.
@@ -92,9 +92,9 @@ public class JavaViewer
         {
             int result = fileChooser.showOpenDialog(null);
             if (result == JFileChooser.APPROVE_OPTION)
-                text.setText("Selected file is: " + fileChooser.getSelectedFile().getName());
+                textArea.setText("Selected file is: " + fileChooser.getSelectedFile().getName());
             else
-                text.setText("No file selected.");
+                textArea.setText("No file selected.");
         });
         
         
@@ -131,8 +131,12 @@ public class JavaViewer
         // Create popup menu for copy
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem copyMenuItem = new JMenuItem("Copy");
+        copyMenuItem.addActionListener((ae) ->
+        {
+            textArea.copy(); // Copies text to clipboard
+        });
 
-        text.addMouseListener(new MouseAdapter() 
+        textArea.addMouseListener(new MouseAdapter() 
         {
             public void mousePressed(MouseEvent me)
             {
@@ -144,16 +148,13 @@ public class JavaViewer
                     popupMenu.show(me.getComponent(), me.getX(), me.getY());
             }
         });
-
         
-
-        popupMenu.add(copyMenuItem);
-
-       // Add Menus to menuBar.
-        menuBar.add(fileMenu);
-        menuBar.add(helpMenu);
-        frame.setJMenuBar(menuBar);
-        frame.add(text);
+        // Add components.
+        menuBar.add(fileMenu); // Add fileMenu to menuBar.
+        menuBar.add(helpMenu); // Add helpMenu to menuBar.
+        popupMenu.add(copyMenuItem); // Add copyMenuItem to popupMenu.
+        frame.setJMenuBar(menuBar); // Add menuBar to frame.
+        frame.add(textArea); // Add textArea to frame.
 
         // Add components to content pane.
         frame.setVisible(true);
