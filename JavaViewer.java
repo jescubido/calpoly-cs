@@ -43,7 +43,7 @@ public class JavaViewer
     JavaViewer()
     {
         JFrame frame = new JFrame("JavaViewer");
-        frame.setSize(500, 300);
+        frame.setSize(400, 250);
         frame.setIconImage(new ImageIcon("JavaViewer.png").getImage());
 
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -82,7 +82,7 @@ public class JavaViewer
 
         // Components and MenuItems for fileMenu Menu.
         fileMenu.setMnemonic(KeyEvent.VK_F);
-        JMenuItem openMenuItem = new JMenuItem("Open", KeyEvent.VK_O);
+        JMenuItem openMenuItem = new JMenuItem("Open...", KeyEvent.VK_O);
         openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
         
         
