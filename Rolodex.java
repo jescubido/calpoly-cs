@@ -33,15 +33,13 @@ public class Rolodex
         // Components of File Menu
         fileMenu.setMnemonic(KeyEvent.VK_F);
         JMenuItem openMenuItem = new JMenuItem("Open", KeyEvent.VK_O);
-        openMenuItem.addActionListener((ae) ->
-        {
-
-        });
-
+        openMenuItem.setEnabled(false); // Disables Open MenuItem.
         JMenuItem findMenuItem = new JMenuItem("Find", KeyEvent.VK_F);
         findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
         findMenuItem.addActionListener((ae) ->
         {
+            String nameInput = JOptionPane.showInputDialog(frame, "Enter Name");
+            //if (nameInput == null)
 
         });
 
@@ -69,19 +67,19 @@ public class Rolodex
         placementMenu.add(bottomPlacement);
         placementMenu.add(leftPlacement);
         // Components for Layout SubMenu.
-        JMenu layoutMenu = new JMenu("Layout");
-        layoutMenu.setMnemonic(KeyEvent.VK_L);
+        JMenu layoutPolicyMenu = new JMenu("Layout");
+        layoutPolicyMenu.setMnemonic(KeyEvent.VK_L);
         JMenuItem scrollMenuItem = new JMenuItem("Scroll", KeyEvent.VK_S);
         JMenuItem wrapMenuItem = new JMenuItem("Wrap", KeyEvent.VK_W);
         // Add components to Layout SubMenu.
-        layoutMenu.add(scrollMenuItem);
-        layoutMenu.add(wrapMenuItem);
+        layoutPolicyMenu.add(scrollMenuItem);
+        layoutPolicyMenu.add(wrapMenuItem);
         // Create defaults MenuItem
         JMenuItem defaultsMenuItem = new JMenuItem("Defaults", KeyEvent.VK_D);
         defaultsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
 
         tabsMenu.add(placementMenu);
-        tabsMenu.add(layoutMenu);
+        tabsMenu.add(layoutPolicyMenu);
         tabsMenu.addSeparator();
         tabsMenu.add(defaultsMenuItem);
 
@@ -97,11 +95,35 @@ public class Rolodex
         
         helpMenu.add(aboutMenuItem);
 
+
+        JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT); // Create a tabbed pane.
+        // Hardcode first tab as my contact.
+        JPanel myContact = new JPanel();
+        JPanel imagePanel = new JPanel();
+        JPanel infoPanel = new JPanel();
+        myContact.setLayout(new GridLayout(1,2));
+        JLabel myPicture = new JLabel(new ImageIcon("me.jpg"));
+        JLabel nameLabel = new JLabel("Name: ");
+        JTextField nameText = new JTextField("Jarisse, Escubido");
+        JLabel emailLabel = new JLabel("Email: ");
+        JTextField emailText = new JTextField("jescubido@cpp.edu");
+
+        imagePanel.add(myPicture);
+        infoPanel.add(nameLabel);
+        infoPanel.add(nameText);
+        infoPanel.add(emailLabel);
+        infoPanel.add(emailText);
+        myContact.add(imagePanel);
+        myContact.add(infoPanel);
+        tabbedPane.addTab("Escubido, Jarisse", myContact);
+
+
         // Add components to content pane.
         menubar.add(fileMenu);
         menubar.add(tabsMenu);
         menubar.add(helpMenu);
         frame.setJMenuBar(menubar);
+        frame.add(tabbedPane);
 
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
