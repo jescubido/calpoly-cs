@@ -1,6 +1,6 @@
 /**
  * Name:        Jarisse Escubido
- * Project: 
+ * Project:     #5
  * Due:         Wednesday April 12, 2023
  * Course:      cs-2450-01-sp23
  * 
@@ -12,14 +12,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class contacts
+public class Rolodex
 {
     // global variables
 
 
-    contacts()
+    Rolodex()
     {
-        JFrame frame = new JFrame("Contacts");
+        JFrame frame = new JFrame("Rolodex");
         frame.setSize(400, 250);
         frame.setIconImage(new ImageIcon("Rolodex.png").getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -109,6 +109,6 @@ public class contacts
 
     public static void main(String args[])
     {
-        SwingUtilities.invokeLater(() -> new contacts());
+        SwingUtilities.invokeLater(() -> new Rolodex());
     }
 }
