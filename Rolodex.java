@@ -113,10 +113,14 @@ public class Rolodex
         findMenuItem.addActionListener((ae) ->
         {
             String nameInput = JOptionPane.showInputDialog(frame, "Enter Name");
+<<<<<<< HEAD
             if (panel.toString() == nameInput || myContact.toString() == nameInput)
             {
                 
             }
+=======
+            //if (nameInput == null)
+>>>>>>> e7e091a6633e3a247b1d56860d39ed7da78a070f
 
         });
 
@@ -184,6 +188,31 @@ public class Rolodex
         helpMenu.add(aboutMenuItem);
 
 
+<<<<<<< HEAD
+=======
+        JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT); // Create a tabbed pane.
+        // Hardcode first tab as my contact.
+        JPanel myContact = new JPanel();
+        JPanel imagePanel = new JPanel();
+        JPanel infoPanel = new JPanel();
+        myContact.setLayout(new GridLayout(1,2));
+        JLabel myPicture = new JLabel(new ImageIcon("me.jpg"));
+        JLabel nameLabel = new JLabel("Name: ");
+        JTextField nameText = new JTextField("Jarisse, Escubido");
+        JLabel emailLabel = new JLabel("Email: ");
+        JTextField emailText = new JTextField("jescubido@cpp.edu");
+
+        imagePanel.add(myPicture);
+        infoPanel.add(nameLabel);
+        infoPanel.add(nameText);
+        infoPanel.add(emailLabel);
+        infoPanel.add(emailText);
+        myContact.add(imagePanel);
+        myContact.add(infoPanel);
+        tabbedPane.addTab("Escubido, Jarisse", myContact);
+
+
+>>>>>>> e7e091a6633e3a247b1d56860d39ed7da78a070f
         // Add components to content pane.
         menubar.add(fileMenu);
         menubar.add(tabsMenu);
