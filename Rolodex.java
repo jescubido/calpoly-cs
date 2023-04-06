@@ -11,18 +11,92 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 
 public class Rolodex
 {
-    // global variables
-
+    // global variables.
+    private JFrame frame;
+    private JTabbedPane tabbedPane;
+    private JLabel picture;
+    private JPanel myContact;
+    private JPanel panel;
 
     Rolodex()
     {
-        JFrame frame = new JFrame("Rolodex");
+        frame = new JFrame("Rolodex");
         frame.setSize(400, 250);
         frame.setIconImage(new ImageIcon("Rolodex.png").getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        tabbedPane = new JTabbedPane(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT); // Create a tabbed pane.
+        // Hardcode first tab as my contact.
+        myContact = new JPanel();
+        JPanel myImagePanel = new JPanel();
+        JPanel myInfoPanel = new JPanel();
+        myContact.setLayout(new GridLayout(1,2)); //left holds pic, right holds name and email.
+        JLabel myPicture = new JLabel(new ImageIcon("nopic.jpg"));
+        JLabel myNameLabel = new JLabel("Name: ");
+        JTextField myNameText = new JTextField("Jarisse, Escubido");
+        myNameText.setEditable(false);
+        JLabel myEmailLabel = new JLabel("Email: ");
+        JTextField myEmailText = new JTextField("jescubido@cpp.edu");
+        myEmailText.setEditable(false);
+
+        myImagePanel.add(myPicture, BorderLayout.CENTER);
+        myInfoPanel.add(myNameLabel);
+        myInfoPanel.add(myNameText);
+        myInfoPanel.add(myEmailLabel);
+        myInfoPanel.add(myEmailText);
+        myContact.add(myImagePanel);
+        myContact.add(myInfoPanel, BorderLayout.CENTER);
+        tabbedPane.addTab("Escubido, Jarisse", myContact);
+
+        // read contents from file and add as tabs.
+        try
+        {
+            BufferedReader reader = new BufferedReader(new java.io.FileReader("contacts.txt"));
+            String line = null;
+            while((line = reader.readLine()) != null)
+            {
+                String[] info = line.split("~"); //info[0] last, first; info[1] email; info[2] image
+                panel = new JPanel();
+                panel.setLayout(new GridLayout(1, 2));
+                JPanel imagePanel = new JPanel();
+                JPanel infoPanel = new JPanel();
+
+                if (new File(info[2]).isFile())
+                {
+                    picture = new JLabel(new ImageIcon(info[2]));
+                }
+                else
+                {
+                    picture = new JLabel(new ImageIcon("nopic.jpg"));
+                }
+
+                JLabel nameLabel = new JLabel("Name: ");
+                JTextField nameText = new JTextField(info[0]);
+                nameText.setEditable(false);
+                JLabel emailLabel = new JLabel("Email: ");
+                JTextField emailText = new JTextField(info[1]);
+                emailText.setEditable(false);
+
+                imagePanel.add(picture, BorderLayout.CENTER);
+                infoPanel.add(nameLabel);
+                infoPanel.add(nameText);
+                infoPanel.add(emailLabel);
+                infoPanel.add(emailText);
+                panel.add(imagePanel);
+                panel.add(infoPanel, BorderLayout.CENTER);
+                tabbedPane.addTab(info[0], panel);
+            }
+        }
+        
+        catch(IOException e)
+        {
+            JOptionPane.showMessageDialog(frame, "contacts.txt cannot be found", "ERROR", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
 
         // Create Menubar with SubMenus: File, Tabs, Help.
         JMenuBar menubar = new JMenuBar();
@@ -33,15 +107,16 @@ public class Rolodex
         // Components of File Menu
         fileMenu.setMnemonic(KeyEvent.VK_F);
         JMenuItem openMenuItem = new JMenuItem("Open", KeyEvent.VK_O);
-        openMenuItem.addActionListener((ae) ->
-        {
-
-        });
-
+        openMenuItem.setEnabled(false); // Disables Open MenuItem.
         JMenuItem findMenuItem = new JMenuItem("Find", KeyEvent.VK_F);
         findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
         findMenuItem.addActionListener((ae) ->
         {
+            String nameInput = JOptionPane.showInputDialog(frame, "Enter Name");
+            if (panel.toString() == nameInput || myContact.toString() == nameInput)
+            {
+                
+            }
 
         });
 
@@ -60,28 +135,39 @@ public class Rolodex
         JMenu placementMenu = new JMenu("Placement");
         placementMenu.setMnemonic(KeyEvent.VK_P);
         JMenuItem topPlacement = new JMenuItem("Top", KeyEvent.VK_T);
+        topPlacement.addActionListener((ae) -> tabbedPane.setTabPlacement(JTabbedPane.TOP));
         JMenuItem rightPlacement = new JMenuItem("Right", KeyEvent.VK_R);
+        rightPlacement.addActionListener((ae) -> tabbedPane.setTabPlacement(JTabbedPane.RIGHT));
         JMenuItem bottomPlacement = new JMenuItem("Bottom", KeyEvent.VK_B);
+        bottomPlacement.addActionListener((ae) -> tabbedPane.setTabPlacement(JTabbedPane.BOTTOM));
         JMenuItem leftPlacement = new JMenuItem("Left", KeyEvent.VK_L);
+        leftPlacement.addActionListener((ae) -> tabbedPane.setTabPlacement(JTabbedPane.LEFT));
         // Add components to Placement SubMenu.
         placementMenu.add(topPlacement);
         placementMenu.add(rightPlacement);
         placementMenu.add(bottomPlacement);
         placementMenu.add(leftPlacement);
         // Components for Layout SubMenu.
-        JMenu layoutMenu = new JMenu("Layout");
-        layoutMenu.setMnemonic(KeyEvent.VK_L);
+        JMenu layoutPolicyMenu = new JMenu("Layout");
+        layoutPolicyMenu.setMnemonic(KeyEvent.VK_L);
         JMenuItem scrollMenuItem = new JMenuItem("Scroll", KeyEvent.VK_S);
+        scrollMenuItem.addActionListener((ae) -> tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT));
         JMenuItem wrapMenuItem = new JMenuItem("Wrap", KeyEvent.VK_W);
+        wrapMenuItem.addActionListener((ae) -> tabbedPane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT));
         // Add components to Layout SubMenu.
-        layoutMenu.add(scrollMenuItem);
-        layoutMenu.add(wrapMenuItem);
+        layoutPolicyMenu.add(scrollMenuItem);
+        layoutPolicyMenu.add(wrapMenuItem);
         // Create defaults MenuItem
         JMenuItem defaultsMenuItem = new JMenuItem("Defaults", KeyEvent.VK_D);
         defaultsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
+        defaultsMenuItem.addActionListener((ae) -> 
+        {
+            tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+            tabbedPane.setTabPlacement(JTabbedPane.TOP);
+        });
 
         tabsMenu.add(placementMenu);
-        tabsMenu.add(layoutMenu);
+        tabsMenu.add(layoutPolicyMenu);
         tabsMenu.addSeparator();
         tabsMenu.add(defaultsMenuItem);
 
@@ -97,11 +183,13 @@ public class Rolodex
         
         helpMenu.add(aboutMenuItem);
 
+
         // Add components to content pane.
         menubar.add(fileMenu);
         menubar.add(tabsMenu);
         menubar.add(helpMenu);
         frame.setJMenuBar(menubar);
+        frame.add(tabbedPane);
 
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
