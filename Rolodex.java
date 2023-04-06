@@ -115,7 +115,7 @@ public class Rolodex
             String nameInput = JOptionPane.showInputDialog(frame, "Enter Name");
             if (panel.toString() == nameInput || myContact.toString() == nameInput)
             {
-                fh
+                
             }
 
         });
