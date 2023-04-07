@@ -5,7 +5,7 @@
  * Course:      cs-2450-01-sp23
  * 
  * Desciption:
- *              hello
+ *              Swing application that displays a contact file using tabs.
  */
 
 import javax.swing.*;
@@ -37,7 +37,7 @@ public class Rolodex
         myContact.setLayout(new GridLayout(1,2)); //left holds pic, right holds name and email.
         JLabel myPicture = new JLabel(new ImageIcon("nopic.jpg"));
         JLabel myNameLabel = new JLabel("Name: ");
-        JTextField myNameText = new JTextField("Jarisse, Escubido");
+        JTextField myNameText = new JTextField("Escubido, Jarisse");
         myNameText.setEditable(false);
         JLabel myEmailLabel = new JLabel("Email: ");
         JTextField myEmailText = new JTextField("jescubido@cpp.edu");
