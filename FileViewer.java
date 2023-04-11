@@ -6,6 +6,7 @@
      * 
      * Description:
      *          A Swing application that edits the contents of a file. 
+     *          file to view is specified in command line argument: java FileViewer <textName.txt>
      */
 
     import java.awt.*;
@@ -21,12 +22,33 @@
         private JComboBox<String> fontlist;
         private JLabel name = new JLabel();
         static private String filename = "";
+        static private int result;
+
 
         FileViewer()
         {
             JFrame frame = new JFrame(filename + " - File Viewer");
             frame.setSize(500,300);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            // Event that asks user for confirmation to close application when System close icon [X] is pressed.
+            frame.addWindowListener(new WindowAdapter()
+            {
+                public void windowClosing(WindowEvent e)
+                {
+                    // Create popup that asks user for confirmation on exiting application.
+                    int result = JOptionPane.showConfirmDialog(frame, "Are you sure you want to exit?",
+                    "Select an Option", JOptionPane.YES_NO_OPTION);
+                    
+                    switch(result)
+                    {
+                        case JOptionPane.YES_OPTION: // If YES is pressed, popup and application closes.
+                            System.exit(0);
+                            break;
+                        case JOptionPane.NO_OPTION: // If NO is pressed, applicatin does not close.
+                            break;
+                    }
+                }
+            });
 
             text = new JTextArea(); // Create Text Area
             text.setBorder(new EtchedBorder());
@@ -44,7 +66,15 @@
 
             JMenuItem exit = new JMenuItem("Exit");
             exit.setMnemonic(KeyEvent.VK_X);
-            exit.addActionListener(ae -> System.exit(0)); // Exit program when clicked.
+            exit.addActionListener((ae) ->
+            {
+                result = JOptionPane.showConfirmDialog(frame, "Are you sure you want to exit?",
+                    "Select an Option", JOptionPane.YES_NO_OPTION);
+                if (result == JOptionPane.YES_OPTION)
+                {
+                    System.exit(0);
+                }
+            });
             
             file.add(exit); // Add component to content pane.
 
