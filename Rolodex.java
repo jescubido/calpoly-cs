@@ -25,7 +25,7 @@ public class Rolodex
     Rolodex()
     {
         frame = new JFrame("Rolodex");
-        frame.setSize(400, 250);
+        frame.setSize(550, 200);
         frame.setIconImage(new ImageIcon("Rolodex.png").getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -37,10 +37,10 @@ public class Rolodex
         myContact.setLayout(new GridLayout(1,2)); //left holds pic, right holds name and email.
         JLabel myPicture = new JLabel(new ImageIcon("nopic.jpg"));
         JLabel myNameLabel = new JLabel("Name: ");
-        JTextField myNameText = new JTextField("Escubido, Jarisse");
+        JTextField myNameText = new JTextField("Escubido, Jarisse", 15);
         myNameText.setEditable(false);
         JLabel myEmailLabel = new JLabel("Email: ");
-        JTextField myEmailText = new JTextField("jescubido@cpp.edu");
+        JTextField myEmailText = new JTextField("jescubido@cpp.edu", 15);
         myEmailText.setEditable(false);
 
         myImagePanel.add(myPicture, BorderLayout.CENTER);
@@ -75,10 +75,10 @@ public class Rolodex
                 }
 
                 JLabel nameLabel = new JLabel("Name: ");
-                JTextField nameText = new JTextField(info[0]);
+                JTextField nameText = new JTextField(info[0], 15);
                 nameText.setEditable(false);
                 JLabel emailLabel = new JLabel("Email: ");
-                JTextField emailText = new JTextField(info[1]);
+                JTextField emailText = new JTextField(info[1], 15);
                 emailText.setEditable(false);
 
                 imagePanel.add(picture, BorderLayout.CENTER);
@@ -113,11 +113,19 @@ public class Rolodex
         findMenuItem.addActionListener((ae) ->
         {
             String nameInput = JOptionPane.showInputDialog(frame, "Enter Name");
-            if (panel.toString() == nameInput || myContact.toString() == nameInput)
+            if (nameInput != null)
             {
-                
+                int index = tabbedPane.indexOfTab(nameInput);
+                if (index != -1)
+                {
+                    tabbedPane.setSelectedIndex(index);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(frame, "'" + nameInput + "'" + " cannot be found.\nPlease enter name using this format: 'Last, First'",
+                    "Invalid Name", JOptionPane.ERROR_MESSAGE);
+                }
             }
-
         });
 
         JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
@@ -183,7 +191,6 @@ public class Rolodex
         
         helpMenu.add(aboutMenuItem);
 
-
         // Add components to content pane.
         menubar.add(fileMenu);
         menubar.add(tabsMenu);
@@ -191,6 +198,7 @@ public class Rolodex
         frame.setJMenuBar(menubar);
         frame.add(tabbedPane);
 
+        //frame.pack();
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
     }
