@@ -12,6 +12,7 @@ package finalProject;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 
 public class JNotepad
 {
@@ -124,14 +125,41 @@ public class JNotepad
         JMenu formatMenu = new JMenu("Format");
         formatMenu.setMnemonic(KeyEvent.VK_O);
         JMenuItem wordWrapMenuItem = new JMenuItem("Word Wrap", KeyEvent.VK_W);
+        wordWrapMenuItem.addActionListener(ae -> 
+                {
+                    text.setLineWrap(true);
+                    text.setWrapStyleWord(true);
+                }); // Create newline when word reaches end of screen.
 
         JMenuItem fontMenuItem = new JMenuItem("Font...", KeyEvent.VK_F);
+        fontMenuItem.addActionListener((ae) ->
+        {
+            
+        });
 
         JMenu colorSubmenu = new JMenu("Color");
         colorSubmenu.setMnemonic(KeyEvent.VK_C);
         JMenuItem backgroundMenuItem = new JMenuItem("Background...", KeyEvent.VK_B);
-
+        backgroundMenuItem.addActionListener((ae) ->
+        {
+            Color backgroundColor = JColorChooser.showDialog(frame, "Select Background Color", Color.WHITE);
+            if (backgroundColor != null)
+            {
+                System.out.println(backgroundColor);
+            }
+            text.setBackground(backgroundColor);
+        });
+    
         JMenuItem foregroundMenuItem = new JMenuItem("Foreground...", KeyEvent.VK_F);
+        foregroundMenuItem.addActionListener((ae) ->
+        {
+            Color foregroundColor = JColorChooser.showDialog(frame, "Select Foreground Color", Color.BLACK);
+            if (foregroundColor != null)
+            {
+                System.out.println(foregroundColor);
+            }
+            text.setForeground(foregroundColor);
+        });
 
         colorSubmenu.add(backgroundMenuItem);
         colorSubmenu.add(foregroundMenuItem);
@@ -153,7 +181,8 @@ public class JNotepad
         JMenuItem viewHelpMenuItem = new JMenuItem("View Help", KeyEvent.VK_H); // Extra Credit
         viewHelpMenuItem.setEnabled(false);
 
-        JMenuItem extraCreditsMenuItem = new JMenuItem("Extra Credits...", KeyEvent.VK_X);
+        JMenuItem extraCreditsMenuItem = new JMenuItem("Extra Credits...", KeyEvent.VK_X);  // Extra Credit
+        extraCreditsMenuItem.setEnabled(false);
 
         helpMenu.add(viewHelpMenuItem);
         helpMenu.add(extraCreditsMenuItem);
