@@ -211,8 +211,20 @@ public class JNotepad
         JMenuItem extraCreditsMenuItem = new JMenuItem("Extra Credits...", KeyEvent.VK_X);  // Extra Credit
         extraCreditsMenuItem.setEnabled(false);
 
+        //-------------------------------
+
+        JMenuItem aboutNotepad = new JMenuItem("About Notepad", KeyEvent.VK_A);
+        aboutNotepad.addActionListener((ae) ->
+        {
+            Icon icon = new ImageIcon("JavaViewer.png");
+            JOptionPane.showMessageDialog(frame, "<html>JNotepad v0.1<br>Copyright (c) J. Escubido<html>",
+                "About", JOptionPane.PLAIN_MESSAGE, icon);
+        });
+
         helpMenu.add(viewHelpMenuItem);
         helpMenu.add(extraCreditsMenuItem);
+        helpMenu.addSeparator();
+        helpMenu.add(aboutNotepad);
 
         // Add menus to menubar
         menubar.add(fileMenu);
