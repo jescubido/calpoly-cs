@@ -41,12 +41,15 @@ public class JNotepad
         fileMenu.setMnemonic(KeyEvent.VK_F);
         JMenuItem newMenuItem = new JMenuItem("New", KeyEvent.VK_N);
         newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         JMenuItem openMenuItem = new JMenuItem("Open...", KeyEvent.VK_O);
         openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         JMenuItem saveMenuItem = new JMenuItem("Save", KeyEvent.VK_S);
         saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         //-------------------------------
 
@@ -56,6 +59,7 @@ public class JNotepad
 
         JMenuItem printMenuItem = new JMenuItem("Print...", KeyEvent.VK_P);
         printMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         //-------------------------------
 
@@ -82,14 +86,19 @@ public class JNotepad
 
         JMenuItem cutMenuItem = new JMenuItem("Cut", KeyEvent.VK_T);
         cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         cutMenuItem.addActionListener((ae) -> text.cut());
 
         JMenuItem copyMenuItem = new JMenuItem("Copy", KeyEvent.VK_C);
         copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
         copyMenuItem.addActionListener((ae) -> text.copy());
 
         JMenuItem pasteMenuItem = new JMenuItem("Paste", KeyEvent.VK_P);
         pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
         pasteMenuItem.addActionListener((ae) -> text.paste());
 
         JMenuItem deleteMenuItem = new JMenuItem("Delete", KeyEvent.VK_L);
@@ -100,24 +109,34 @@ public class JNotepad
 
         JMenuItem findMenuItem = new JMenuItem("Find...", KeyEvent.VK_F);
         findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
 
         JMenuItem findNextMenuItem = new JMenuItem("Find Next", KeyEvent.VK_N); // Extra Credit
         findNextMenuItem.setEnabled(false);
 
         JMenuItem replaceMenuItem = new JMenuItem("Replace...", KeyEvent.VK_R); // Extra Credit
         replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
 
         JMenuItem goToMenuItem = new JMenuItem("Go To...", KeyEvent.VK_G);
         goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
 
         //-------------------------------
 
         JMenuItem selectAllMenuItem = new JMenuItem("Select All", KeyEvent.VK_A);
         selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
         selectAllMenuItem.addActionListener((ae) -> text.selectAll());
 
         JMenuItem timeDateMenuItem = new JMenuItem("Time/Date", KeyEvent.VK_D);
         timeDateMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+        // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
         JLabel time = new JLabel("");
         time.setHorizontalAlignment(SwingConstants.CENTER);
         timeDateMenuItem.addActionListener((ae) ->
