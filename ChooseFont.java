@@ -15,6 +15,8 @@ import javax.swing.border.LineBorder;
 import java.awt.event.*;
 import javax.swing.event.*;
 
+import finalProject.Dialogs;
+
 public class ChooseFont extends JFrame{
     
     // global variables
