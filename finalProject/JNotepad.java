@@ -16,6 +16,8 @@ import finalProject.Dialogs.JFontChooser;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class JNotepad
 {
@@ -112,9 +114,27 @@ public class JNotepad
 
         JMenuItem selectAllMenuItem = new JMenuItem("Select All", KeyEvent.VK_A);
         selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
+        selectAllMenuItem.addActionListener((ae) -> text.selectAll());
 
         JMenuItem timeDateMenuItem = new JMenuItem("Time/Date", KeyEvent.VK_D);
         timeDateMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+        JLabel time = new JLabel("");
+        time.setHorizontalAlignment(SwingConstants.CENTER);
+        timeDateMenuItem.addActionListener((ae) ->
+        {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm a MM/dd/yyyy");
+            String date = sdf.format(new Date());
+            time.setText(date);;
+            Timer timer = new Timer(5000, new ActionListener() 
+            {
+                public void actionPerformed(ActionEvent e) 
+                {
+                    time.setText("");
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
+        });
 
         editMenu.add(undoMenuItem);
         editMenu.add(cutMenuItem);
@@ -206,6 +226,7 @@ public class JNotepad
 
         // Add to frame
         frame.setJMenuBar(menubar);
+        frame.add(time, BorderLayout.NORTH);
         frame.add(text);
 
         frame.setVisible(true);
