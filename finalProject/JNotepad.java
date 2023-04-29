@@ -80,16 +80,20 @@ public class JNotepad
 
         JMenuItem cutMenuItem = new JMenuItem("Cut", KeyEvent.VK_T);
         cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
+        cutMenuItem.addActionListener((ae) -> text.cut());
 
         JMenuItem copyMenuItem = new JMenuItem("Copy", KeyEvent.VK_C);
         copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
+        copyMenuItem.addActionListener((ae) -> text.copy());
 
         JMenuItem pasteMenuItem = new JMenuItem("Paste", KeyEvent.VK_P);
         pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+        pasteMenuItem.addActionListener((ae) -> text.paste());
 
         JMenuItem deleteMenuItem = new JMenuItem("Delete", KeyEvent.VK_L);
         deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-
+        deleteMenuItem.addActionListener((ae) -> text.setText(""));
+        
         //-------------------------------
 
         JMenuItem findMenuItem = new JMenuItem("Find...", KeyEvent.VK_F);
@@ -129,10 +133,10 @@ public class JNotepad
         formatMenu.setMnemonic(KeyEvent.VK_O);
         JMenuItem wordWrapMenuItem = new JMenuItem("Word Wrap", KeyEvent.VK_W);
         wordWrapMenuItem.addActionListener(ae -> 
-                {
-                    text.setLineWrap(true);
-                    text.setWrapStyleWord(true);
-                }); // Create newline when word reaches end of screen.
+        {
+            text.setLineWrap(true);
+            text.setWrapStyleWord(true);
+        }); // Create newline when word reaches end of screen.
 
         JMenuItem fontMenuItem = new JMenuItem("Font...", KeyEvent.VK_F);
         fontMenuItem.addActionListener((ae) ->
