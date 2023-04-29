@@ -16,9 +16,9 @@ public class Dialogs
     	private static JLabel text;
 		static Font font;
 
-		static Font showDialog(JFrame frame, String title, Font initialFont)
+		static Font showDialog(JFrame parent, String title, Font initialFont)
 		{
-			JDialog dlg = new JDialog(frame, "Choose Font", true);
+			JDialog dlg = new JDialog(parent, "Choose Font", true);
 			dlg.setSize(300, 300);
 			dlg.setLayout(new FlowLayout());
 			dlg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -55,7 +55,6 @@ public class Dialogs
 			// Create Ok and Cancel buttons.
 			JButton ok = new JButton("Ok");
 			ok.addActionListener((ae) -> {
-				Font font = JFontChooser.showDialog(frame, "Select Font", null);
 				dlg.dispose();
 			});
 			dlg.add(ok);
@@ -76,7 +75,7 @@ public class Dialogs
 			dlg.add(panel, BorderLayout.SOUTH);
 
 			font = null;
-			dlg.setLocationRelativeTo(frame);
+			dlg.setLocationRelativeTo(parent);
 			dlg.setVisible(true);
 
 			return font;
