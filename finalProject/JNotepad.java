@@ -10,6 +10,9 @@ package finalProject;
  */
 
 import javax.swing.*;
+
+import finalProject.Dialogs.JFontChooser;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -134,7 +137,7 @@ public class JNotepad
         JMenuItem fontMenuItem = new JMenuItem("Font...", KeyEvent.VK_F);
         fontMenuItem.addActionListener((ae) ->
         {
-            
+            JFontChooser.showDialog(frame, "Choose Font", null);
         });
 
         JMenu colorSubmenu = new JMenu("Color");
