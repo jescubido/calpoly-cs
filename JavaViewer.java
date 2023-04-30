@@ -43,7 +43,7 @@ public class JavaViewer
     JavaViewer()
     {
         JFrame frame = new JFrame("JavaViewer");
-        frame.setSize(400, 250);
+        frame.setSize(600, 400);
         frame.setIconImage(new ImageIcon("JavaViewer.png").getImage());
 
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -68,6 +68,7 @@ public class JavaViewer
         });
 
         textArea = new JTextArea(); // Create a TextArea where source file will be displayed.
+        JScrollPane scrollPane = new JScrollPane(textArea);
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         textArea.setFont(new Font("Courier New", Font.PLAIN, 12));
@@ -90,16 +91,26 @@ public class JavaViewer
         fileChooser.setFileFilter(new JavaFileFilter());
         openMenuItem.addActionListener((ae) ->
         {
-            int result = fileChooser.showOpenDialog(null);
+            int result = fileChooser.showOpenDialog(frame);
             if (result == JFileChooser.APPROVE_OPTION)
-                textArea.setText("Selected file is: " + fileChooser.getSelectedFile().getName());
-            else
-                textArea.setText("No file selected.");
+            {
+                String selectedFile = fileChooser.getSelectedFile().getPath();
+                try 
+                {
+                    BufferedReader reader = new BufferedReader(new FileReader(selectedFile));
+                    textArea.setText("");
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                       textArea.append(line + "\n");
+                    }
+                } 
+                catch (IOException e) 
+                {
+                    System.out.println("File cannot be opened: " + selectedFile);
+                }
+            }
         });
         
-        
-
-
         JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
         exitMenuItem.addActionListener((ae) ->
         {
@@ -154,7 +165,7 @@ public class JavaViewer
         menuBar.add(helpMenu); // Add helpMenu to menuBar.
         popupMenu.add(copyMenuItem); // Add copyMenuItem to popupMenu.
         frame.setJMenuBar(menuBar); // Add menuBar to frame.
-        frame.add(textArea); // Add textArea to frame.
+        frame.add(scrollPane); // Add textArea to frame.
 
         // Add components to content pane.
         frame.setVisible(true);
