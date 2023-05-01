@@ -12,7 +12,7 @@ package finalProject;
 import javax.swing.*;
 
 import finalProject.Dialogs.JFontChooser;
-
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -25,6 +25,7 @@ public class JNotepad
     private JFrame frame;
     JTextArea text;
     JMenuBar menubar;
+    private String selectedFile;
 
     JNotepad()
     {
@@ -43,13 +44,71 @@ public class JNotepad
         newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
+        // Custom file filter that displays Java source files and directories.
+        class JavaFileFilter extends FileFilter
+        {
+            public boolean accept(File file)
+            {
+                if (file.getName().endsWith(".java")) return true;
+                if (file.getName().endsWith(".txt")) return true;
+                if (file.isDirectory()) return true;
+
+                return false;
+            }
+
+            public String getDescription()
+            {
+                return "Java and Text Source Code Files";
+            }
+        }
+
         JMenuItem openMenuItem = new JMenuItem("Open...", KeyEvent.VK_O);
         openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new JavaFileFilter());
+        openMenuItem.addActionListener((ae) ->
+        {
+            int result = fileChooser.showOpenDialog(frame);
+            if (result == JFileChooser.APPROVE_OPTION)
+            {
+                selectedFile = fileChooser.getSelectedFile().getPath();
+                try 
+                {
+                    BufferedReader reader = new BufferedReader(new FileReader(selectedFile));
+                    text.setText("");
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                       text.append(line + "\n");
+                    }
+                } 
+                catch (IOException e) 
+                {
+                    System.out.println("File cannot be opened: " + selectedFile);
+                }
+            }
+        });
 
         JMenuItem saveMenuItem = new JMenuItem("Save", KeyEvent.VK_S);
         saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        saveMenuItem.addActionListener((ae) ->
+        {
+            if (selectedFile != null)
+            {
+                try
+                {
+                    FileWriter writer = new FileWriter(selectedFile);
+                    writer.write(text.getText());
+                    writer.close();
+                    JOptionPane.showMessageDialog(frame, "File saved successfully!");
+                } 
+                catch (IOException e) 
+                {
+                    JOptionPane.showMessageDialog(frame, "Error saving file: " + e.getMessage());
+                }
+            }
+        });
 
         //-------------------------------
 
@@ -254,11 +313,12 @@ public class JNotepad
 
         text = new JTextArea();
         text.setFont(new Font("Courier New", Font.PLAIN, 12)); // default or initial font
+        JScrollPane scrollPane = new JScrollPane(text);
 
         // Add to frame
         frame.setJMenuBar(menubar);
         frame.add(time, BorderLayout.NORTH);
-        frame.add(text);
+        frame.add(scrollPane);
 
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
