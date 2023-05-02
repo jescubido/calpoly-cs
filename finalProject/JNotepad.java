@@ -98,9 +98,9 @@ public class JNotepad
             {
                 try
                 {
-                    FileWriter writer = new FileWriter(selectedFile);
-                    writer.write(text.getText());
-                    writer.close();
+                    FileWriter fileWriter = new FileWriter(selectedFile);
+                    fileWriter.write(text.getText());
+                    fileWriter.close();
                     JOptionPane.showMessageDialog(frame, "File saved successfully!");
                 } 
                 catch (IOException e) 
@@ -113,10 +113,29 @@ public class JNotepad
         //-------------------------------
 
         JMenuItem saveAsMenuItem = new JMenuItem("Save As...", KeyEvent.VK_A);
+        saveAsMenuItem.addActionListener((ae) ->
+        {
+            int result = fileChooser.showSaveDialog(frame);
+            if (result == JFileChooser.APPROVE_OPTION)
+            {
+                File file = new File(fileChooser.getSelectedFile().getPath());
+                try 
+                {
+                    FileWriter fileWriter = new FileWriter(file);
+                    fileWriter.write(text.getText());
+                    fileWriter.close();
+                    JOptionPane.showMessageDialog(frame, "File saved successfully!");
+                } 
+                catch (IOException e) 
+                {
+                    System.out.println("File cannot be saved: " + selectedFile);
+                }
+            }
+        });
 
-        JMenuItem pageSetupMenuItem = new JMenuItem("Page Setup...", KeyEvent.VK_U);
+        JMenuItem pageSetupMenuItem = new JMenuItem("Page Setup...", KeyEvent.VK_U); // Extra Credit
 
-        JMenuItem printMenuItem = new JMenuItem("Print...", KeyEvent.VK_P);
+        JMenuItem printMenuItem = new JMenuItem("Print...", KeyEvent.VK_P); // Extra Credit
         printMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
@@ -181,7 +200,6 @@ public class JNotepad
         findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
-
         JMenuItem findNextMenuItem = new JMenuItem("Find Next", KeyEvent.VK_N); // Extra Credit
         findNextMenuItem.setEnabled(false);
 
@@ -200,7 +218,6 @@ public class JNotepad
         JMenuItem selectAllMenuItem = new JMenuItem("Select All", KeyEvent.VK_A);
         selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
         selectAllMenuItem.addActionListener((ae) -> text.selectAll());
 
         JMenuItem timeDateMenuItem = new JMenuItem("Time/Date", KeyEvent.VK_D);
