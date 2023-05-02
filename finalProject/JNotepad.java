@@ -29,7 +29,7 @@ public class JNotepad
 
     JNotepad()
     {
-        frame = new JFrame();
+        frame = new JFrame("JNotepad");
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setIconImage(new ImageIcon("JNotepad.png").getImage());
@@ -162,7 +162,18 @@ public class JNotepad
 
         JMenuItem deleteMenuItem = new JMenuItem("Delete", KeyEvent.VK_L);
         deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        deleteMenuItem.addActionListener((ae) -> text.setText(""));
+        deleteMenuItem.addActionListener((ae) -> 
+        {
+            String selectedText = text.getSelectedText();
+            if(selectedText != null)
+                text.replaceSelection("");
+        });
+
+        editMenu.add(undoMenuItem);
+        editMenu.add(cutMenuItem);
+        editMenu.add(copyMenuItem);
+        editMenu.add(pasteMenuItem);
+        editMenu.add(deleteMenuItem);
         
         //-------------------------------
 
@@ -202,23 +213,9 @@ public class JNotepad
         {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm a MM/dd/yyyy");
             String date = sdf.format(new Date());
-            time.setText(date);;
-            Timer timer = new Timer(5000, new ActionListener() 
-            {
-                public void actionPerformed(ActionEvent e) 
-                {
-                    time.setText("");
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
+            text.append("\n" + date + "\n");
         });
 
-        editMenu.add(undoMenuItem);
-        editMenu.add(cutMenuItem);
-        editMenu.add(copyMenuItem);
-        editMenu.add(pasteMenuItem);
-        editMenu.add(deleteMenuItem);
         editMenu.add(findMenuItem);
         editMenu.add(findNextMenuItem);
         editMenu.add(replaceMenuItem);
@@ -288,6 +285,9 @@ public class JNotepad
 
         JMenuItem extraCreditsMenuItem = new JMenuItem("Extra Credits...", KeyEvent.VK_X);  // Extra Credit
         extraCreditsMenuItem.setEnabled(false);
+
+        // Extra 5: Drag a file into the notepad and it opens the file (Drag & Drop)
+            // Make sure no changes in current file have been made
 
         //-------------------------------
 
