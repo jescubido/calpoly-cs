@@ -12,14 +12,14 @@ public class Dialogs
 {
 	public class JFontChooser
 	{
-		private static JList<String> fontList;
-    	private static JLabel text;
+		static JList<String> fontList;
 		static Font font;
+		static String selection;
 
 		static Font showDialog(JFrame parent, String title, Font initialFont)
 		{
 			JDialog dlg = new JDialog(parent, "Choose Font", true);
-			dlg.setSize(300, 300);
+			dlg.setSize(500, 300);
 			dlg.setLayout(new FlowLayout());
 			dlg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -30,9 +30,9 @@ public class Dialogs
 			*/
 
 			// Create font list with vertical slider and single selection.
-			JPanel fontPanel = new JPanel(new FlowLayout());
+			JPanel fontPanel = new JPanel();
         	fontPanel.setPreferredSize(new Dimension(200,150));
-        	JLabel fonts = new JLabel("Fonts:");
+        	JLabel fonts = new JLabel("Fonts:", KeyEvent.VK_F);
 			fontList = new JList<>(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
 			JScrollPane vertScroll = new JScrollPane(fontList);
 			vertScroll.getVerticalScrollBar().setFocusable(true);
@@ -44,7 +44,8 @@ public class Dialogs
 					int index = fontList.getSelectedIndex();
 					if (index != -1)
 					{
-						text.setFont(new Font(fontList.getSelectedValue().toString(), Font.PLAIN, 12));
+						selection = fontList.getSelectedValue().toString();
+						//text.setFont(new Font(fontList.getSelectedValue().toString(), Font.PLAIN, 12));
 					}
 				}
 			});
@@ -54,15 +55,16 @@ public class Dialogs
 
 			// Create Ok and Cancel buttons.
 			JButton ok = new JButton("Ok");
-			ok.addActionListener((ae) -> {
+			ok.addActionListener((ae) -> 
+			{
+				font = new Font(selection, Font.PLAIN, 12);
 				dlg.dispose();
 			});
 			dlg.add(ok);
 
 			JButton cancel = new JButton("Cancel");
-			cancel.addActionListener((ae) -> {
-				dlg.dispose();
-			});
+			cancel.addActionListener((ae) -> dlg.dispose());
+			
 			dlg.add(cancel);
 
 			// Create panel to add buttons.
@@ -71,11 +73,10 @@ public class Dialogs
 			panel.add(cancel);
 
 			// Add components to content pane.
-			dlg.add(fontPanel, BorderLayout.NORTH);
+			dlg.add(fontPanel, BorderLayout.WEST);
 			dlg.add(panel, BorderLayout.SOUTH);
 
-			font = null;
-			dlg.setLocationRelativeTo(parent);
+			dlg.setLocationRelativeTo(null);
 			dlg.setVisible(true);
 
 			return font;
