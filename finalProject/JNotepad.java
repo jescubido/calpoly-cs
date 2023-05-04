@@ -10,6 +10,8 @@ package finalProject;
  */
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import finalProject.Dialogs.JFontChooser;
 import javax.swing.filechooser.FileFilter;
@@ -26,6 +28,7 @@ public class JNotepad
     JTextArea text;
     JMenuBar menubar;
     private String selectedFile;
+    private JPopupMenu editPopup;
 
     JNotepad()
     {
@@ -75,15 +78,13 @@ public class JNotepad
                 selectedFile = fileChooser.getSelectedFile().getPath();
                 try 
                 {
-                    BufferedReader reader = new BufferedReader(new FileReader(selectedFile));
-                    text.setText("");
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                       text.append(line + "\n");
-                    }
-                } 
+                    FileReader fileReader = new FileReader(selectedFile);
+                    text.read(fileReader, null);
+                    fileReader.close();
+                }
                 catch (IOException e) 
                 {
+                    JOptionPane.showMessageDialog(frame, "Error opening or reading file.");
                     System.out.println("File cannot be opened: " + selectedFile);
                 }
             }
@@ -106,6 +107,7 @@ public class JNotepad
                 catch (IOException e) 
                 {
                     JOptionPane.showMessageDialog(frame, "Error saving file: " + e.getMessage());
+                    System.out.println("File cannot be saved: " + selectedFile);
                 }
             }
         });
@@ -118,16 +120,16 @@ public class JNotepad
             int result = fileChooser.showSaveDialog(frame);
             if (result == JFileChooser.APPROVE_OPTION)
             {
-                File file = new File(fileChooser.getSelectedFile().getPath());
                 try 
                 {
-                    FileWriter fileWriter = new FileWriter(file);
+                    FileWriter fileWriter = new FileWriter(selectedFile);
                     fileWriter.write(text.getText());
                     fileWriter.close();
                     JOptionPane.showMessageDialog(frame, "File saved successfully!");
                 } 
                 catch (IOException e) 
                 {
+                    JOptionPane.showMessageDialog(frame, "Error saving file: " + e.getMessage());
                     System.out.println("File cannot be saved: " + selectedFile);
                 }
             }
@@ -170,13 +172,11 @@ public class JNotepad
         JMenuItem copyMenuItem = new JMenuItem("Copy", KeyEvent.VK_C);
         copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
         copyMenuItem.addActionListener((ae) -> text.copy());
 
         JMenuItem pasteMenuItem = new JMenuItem("Paste", KeyEvent.VK_P);
         pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
         pasteMenuItem.addActionListener((ae) -> text.paste());
 
         JMenuItem deleteMenuItem = new JMenuItem("Delete", KeyEvent.VK_L);
@@ -199,6 +199,10 @@ public class JNotepad
         JMenuItem findMenuItem = new JMenuItem("Find...", KeyEvent.VK_F);
         findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        findMenuItem.addActionListener((ae) ->
+        {
+            //String searchString = text.getText();
+        });
 
         JMenuItem findNextMenuItem = new JMenuItem("Find Next", KeyEvent.VK_N); // Extra Credit
         findNextMenuItem.setEnabled(false);
@@ -254,6 +258,7 @@ public class JNotepad
         fontMenuItem.addActionListener((ae) ->
         {
             JFontChooser.showDialog(frame, "Choose Font", null);
+            //text.setFont(new Font(font, Font.PLAIN, 12));
         });
 
         JMenu colorSubmenu = new JMenu("Color");
@@ -329,8 +334,63 @@ public class JNotepad
         menubar.add(helpMenu);
 
         text = new JTextArea();
-        text.setFont(new Font("Courier New", Font.PLAIN, 12)); // default or initial font
+        Font initialFont = (new Font("Courier New", Font.PLAIN, 12)); // default or initial font
+        text.setFont(initialFont);
         JScrollPane scrollPane = new JScrollPane(text);
+
+
+        // Create PopupMenu for cut, copy, paste
+        editPopup = new JPopupMenu();
+        JMenuItem cutPopup = new JMenuItem("Cut");
+        cutPopup.addActionListener((ae) -> text.cut());
+        JMenuItem copyPopup = new JMenuItem("Copy");
+        copyPopup.addActionListener((ae) -> text.copy());
+        JMenuItem pastePopup = new JMenuItem("Paste");
+        pastePopup.addActionListener((ae) -> text.paste());
+        editPopup.add(cutPopup);
+        editPopup.add(copyPopup);
+        editPopup.add(pastePopup);
+
+        editPopup.addPopupMenuListener(new PopupMenuListener() 
+        {
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) 
+            {
+                if(text.getSelectedText() == null)
+                {
+                    cutPopup.setVisible(false);
+                    copyPopup.setVisible(false);
+                }
+            }
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) 
+            {
+                if(text.getSelectedText() == null)
+                {
+                    cutPopup.setVisible(false);
+                    copyPopup.setVisible(false);
+                }
+                else
+                {
+                    pastePopup.setVisible(true);
+                }
+            }
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {}
+        });
+
+        text.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    editPopup.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    editPopup.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
 
         // Add to frame
         frame.setJMenuBar(menubar);
