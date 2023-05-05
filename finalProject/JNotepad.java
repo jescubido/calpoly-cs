@@ -13,10 +13,11 @@ import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import finalProject.Dialogs.JFontChooser;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -140,6 +141,21 @@ public class JNotepad
         JMenuItem printMenuItem = new JMenuItem("Print...", KeyEvent.VK_P); // Extra Credit
         printMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        printMenuItem.addActionListener((ae) -> 
+        {
+            PrinterJob printerJob = PrinterJob.getPrinterJob();
+            if (printerJob.printDialog())
+            {
+                try
+                {
+                    printerJob.print();
+                }
+                catch (PrinterException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         //-------------------------------
 
@@ -211,7 +227,6 @@ public class JNotepad
         replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
-
         JMenuItem goToMenuItem = new JMenuItem("Go To...", KeyEvent.VK_G);
         goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -256,8 +271,10 @@ public class JNotepad
         JMenuItem fontMenuItem = new JMenuItem("Font...", KeyEvent.VK_F);
         fontMenuItem.addActionListener((ae) ->
         {
-            JFontChooser.showDialog(frame, "Choose Font", null);
-            //text.setFont(new Font(font, Font.PLAIN, 12));
+            Font initialFont = text.getFont();
+            Font font = Dialogs.showDialog(frame, "Choose Font", initialFont);
+            if (font != null)
+                text.setFont(font);
         });
 
         JMenu colorSubmenu = new JMenu("Color");
