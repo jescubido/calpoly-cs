@@ -227,12 +227,11 @@ public class JNotepad
         JMenuItem timeDateMenuItem = new JMenuItem("Time/Date", KeyEvent.VK_D);
         timeDateMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
         JLabel time = new JLabel("");
         time.setHorizontalAlignment(SwingConstants.CENTER);
         timeDateMenuItem.addActionListener((ae) ->
         {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm a MM/dd/yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("h:mm a MM/dd/yyyy");
             String date = sdf.format(new Date());
             text.append("\n" + date + "\n");
         });
@@ -316,7 +315,7 @@ public class JNotepad
         JMenuItem aboutNotepad = new JMenuItem("About Notepad", KeyEvent.VK_A);
         aboutNotepad.addActionListener((ae) ->
         {
-            Icon icon = new ImageIcon("JavaViewer.png");
+            Icon icon = new ImageIcon("JNotepad.png");
             JOptionPane.showMessageDialog(frame, "<html>JNotepad v0.1<br>Copyright (c) J. Escubido<html>",
                 "About", JOptionPane.PLAIN_MESSAGE, icon);
         });
