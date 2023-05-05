@@ -217,7 +217,19 @@ public class JNotepad
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         findMenuItem.addActionListener((ae) ->
         {
-            //String searchString = text.getText();
+            String searchString = JOptionPane.showInputDialog("Find: ");
+            if (searchString != null)
+            {
+                int index = text.getText().indexOf(searchString);
+                if (index != -1)
+                {
+                    text.select(index, index + searchString.length());
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Cannot find '" + searchString + "'", "JNotepad", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
         });
 
         JMenuItem findNextMenuItem = new JMenuItem("Find Next", KeyEvent.VK_N); // Extra Credit
@@ -226,6 +238,23 @@ public class JNotepad
         JMenuItem replaceMenuItem = new JMenuItem("Replace...", KeyEvent.VK_R); // Extra Credit
         replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        replaceMenuItem.addActionListener((ae) ->
+        {
+            String searchString = JOptionPane.showInputDialog("Find: ");
+            String replaceString = JOptionPane.showInputDialog("Replace: ");
+            if (searchString != null && replaceString != null)
+            {
+                String selectedText = text.getSelectedText();
+                if (selectedText != null && selectedText.equals(searchString))
+                {
+                    text.replaceSelection(replaceString);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Cannot find '" + searchString + "'", "JNotepad", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
 
         JMenuItem goToMenuItem = new JMenuItem("Go To...", KeyEvent.VK_G);
         goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
@@ -381,13 +410,10 @@ public class JNotepad
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) 
             {
-                if(text.getSelectedText() == null)
+                if(text.getSelectedText() != null)
                 {
-                    cutPopup.setVisible(false);
-                    copyPopup.setVisible(false);
-                }
-                else
-                {
+                    cutPopup.setVisible(true);
+                    copyPopup.setVisible(true);
                     pastePopup.setVisible(true);
                 }
             }
