@@ -1,85 +1,111 @@
 package finalProject;
 
-
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
+import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.*;
 
 public class Dialogs
 {
-	public class JFontChooser
+	static Font font;
+
+	public static Font showDialog(JFrame parent, String title, Font initialFont)
 	{
-		static JList<String> fontList;
-		static Font font;
-		static String selection;
+		JDialog dlg = new JDialog(parent, "Choose Font", true);
+		dlg.setSize(550, 350);
+		dlg.setLayout(new FlowLayout());
+		dlg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		static Font showDialog(JFrame parent, String title, Font initialFont)
+		// Create font list with vertical slider and single selection.
+		JPanel left = new JPanel(new GridLayout(0,1));
+		left.setPreferredSize(new Dimension(250,150));
+		JLabel fonts = new JLabel("Fonts:");
+		JList<String> fontList = new JList<>(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+		JScrollPane vertScroll = new JScrollPane(fontList);
+		fontList.setSelectedValue(initialFont.getFamily(), true);
+
+		left.add(fonts);
+		left.add(vertScroll);
+
+		// Create JPanel for size and horizontal scrollbar.
+		JPanel top = new JPanel(new GridLayout(0,1));
+		top.setPreferredSize(new Dimension(500,85));
+		top.setBorder(new LineBorder(Color.black));
+		JLabel size = new JLabel("Size:");
+		JSlider horzSlider = new JSlider(JSlider.HORIZONTAL, 8,20,8);
+
+		horzSlider.setPaintTicks(true);
+		horzSlider.setPaintLabels(true);
+		horzSlider.setMajorTickSpacing(2);
+		horzSlider.setSnapToTicks(true);
+
+		top.add(size);
+		top.add(horzSlider);
+
+		// Create JPanel for Style.
+		JPanel right = new JPanel(new GridLayout(0, 1));
+		right.setPreferredSize(new Dimension(250,150));
+		right.setBorder(new LineBorder(Color.black));
+		JLabel styleLabel = new JLabel("Style:");
+		ButtonGroup style = new ButtonGroup();
+		JRadioButton regularStyle = new JRadioButton("Regular", true);
+		regularStyle.setSelected(initialFont.getStyle() == Font.PLAIN);
+		JRadioButton italicStyle = new JRadioButton("Italic", true);
+		italicStyle.setSelected(initialFont.getStyle() == Font.ITALIC);
+		JRadioButton boldStyle = new JRadioButton("Bold", true);
+		boldStyle.setSelected(initialFont.getStyle() == Font.BOLD);
+		
+		style.add(regularStyle);
+		style.add(italicStyle);
+		style.add(boldStyle);
+		right.add(styleLabel);
+		right.add(regularStyle);
+		right.add(italicStyle);
+		right.add(boldStyle);
+
+		// Create Ok and Cancel buttons.
+		JButton ok = new JButton("Ok");
+		ok.addActionListener((ae) -> 
 		{
-			JDialog dlg = new JDialog(parent, "Choose Font", true);
-			dlg.setSize(500, 300);
-			dlg.setLayout(new FlowLayout());
-			dlg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			String fontName = (String) fontList.getSelectedValue();
+			int fontSize = horzSlider.getValue();
+			int fontStyle = Font.PLAIN;
+			if (regularStyle.isSelected()) {
+				fontStyle = Font.PLAIN;
+			}
+			if (italicStyle.isSelected()) {
+				fontStyle = Font.ITALIC;
+			}
+			if (boldStyle.isSelected()) {
+				fontStyle = Font.BOLD;
+			}
+			Font font = new Font(fontName, fontStyle, fontSize);
+			Dialogs.font = font;
+			dlg.dispose();
+		});
+		dlg.add(ok);
 
-			/*
-			* format the dialog as the frame in project 3
-			* use initialFont to set the selected font, size, and style
-			* Add Ok and Cancel buttons under the sample text
-			*/
+		JButton cancel = new JButton("Cancel");
+		cancel.addActionListener((ae) -> 
+		{
+			font = null;
+			dlg.dispose();
+		});
+		dlg.add(cancel);
 
-			// Create font list with vertical slider and single selection.
-			JPanel fontPanel = new JPanel();
-        	fontPanel.setPreferredSize(new Dimension(200,150));
-        	JLabel fonts = new JLabel("Fonts:", KeyEvent.VK_F);
-			fontList = new JList<>(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
-			JScrollPane vertScroll = new JScrollPane(fontList);
-			vertScroll.getVerticalScrollBar().setFocusable(true);
-			fontList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			fontList.addListSelectionListener((ListSelectionListener) new ListSelectionListener()
-			{
-				public void valueChanged(ListSelectionEvent ce)
-				{
-					int index = fontList.getSelectedIndex();
-					if (index != -1)
-					{
-						selection = fontList.getSelectedValue().toString();
-						//text.setFont(new Font(fontList.getSelectedValue().toString(), Font.PLAIN, 12));
-					}
-				}
-			});
-	
-			fontPanel.add(fonts);
-			fontPanel.add(vertScroll);
+		// Create panel to add buttons.
+		JPanel bottom = new JPanel();
+		bottom.add(ok);
+		bottom.add(cancel);
 
-			// Create Ok and Cancel buttons.
-			JButton ok = new JButton("Ok");
-			ok.addActionListener((ae) -> 
-			{
-				font = new Font(selection, Font.PLAIN, 12);
-				dlg.dispose();
-			});
-			dlg.add(ok);
+		// Add components to content pane.
+		dlg.add(top, BorderLayout.NORTH);
+		dlg.add(left, BorderLayout.WEST);
+		dlg.add(right, BorderLayout.EAST);
+		dlg.add(bottom, BorderLayout.SOUTH);
 
-			JButton cancel = new JButton("Cancel");
-			cancel.addActionListener((ae) -> dlg.dispose());
-			
-			dlg.add(cancel);
+		dlg.setLocationRelativeTo(null);
+		dlg.setVisible(true);
 
-			// Create panel to add buttons.
-			JPanel panel = new JPanel();
-			panel.add(ok);
-			panel.add(cancel);
-
-			// Add components to content pane.
-			dlg.add(fontPanel, BorderLayout.WEST);
-			dlg.add(panel, BorderLayout.SOUTH);
-
-			dlg.setLocationRelativeTo(null);
-			dlg.setVisible(true);
-
-			return font;
-		}
+		return font;
 	}
 }
