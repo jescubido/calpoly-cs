@@ -11,10 +11,13 @@ package finalProject;
 
 import javax.swing.*;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 >>>>>>> parent of 0105a9a (no change)
+=======
+>>>>>>> parent of 7245913 (implement save and exit changes)
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -36,9 +39,12 @@ public class JNotepad
     private String selectedFile;
     private JPopupMenu editPopup;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     private boolean unsavedChanges = false;
 >>>>>>> parent of 0105a9a (no change)
+=======
+>>>>>>> parent of 7245913 (implement save and exit changes)
 
     JNotepad()
     {
@@ -121,6 +127,7 @@ public class JNotepad
                 }
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             if (fileChooser.getSelectedFile() == null)
             {
@@ -142,6 +149,8 @@ public class JNotepad
                 }
             }
 >>>>>>> parent of 0105a9a (no change)
+=======
+>>>>>>> parent of 7245913 (implement save and exit changes)
         });
 
         //-------------------------------
@@ -192,6 +201,7 @@ public class JNotepad
 
         JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
 <<<<<<< HEAD
+<<<<<<< HEAD
         exitMenuItem.addActionListener((ae) -> System.exit(0));
 =======
         exitMenuItem.addActionListener((ae) -> 
@@ -227,6 +237,9 @@ public class JNotepad
             System.exit(0);
         });
 >>>>>>> parent of 0105a9a (no change)
+=======
+        exitMenuItem.addActionListener((ae) -> System.exit(0));
+>>>>>>> parent of 7245913 (implement save and exit changes)
 
         fileMenu.add(newMenuItem);
         fileMenu.add(openMenuItem);
