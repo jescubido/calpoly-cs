@@ -10,6 +10,8 @@ package finalProject;
  */
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -30,6 +32,7 @@ public class JNotepad
     JMenuBar menubar;
     private String selectedFile;
     private JPopupMenu editPopup;
+    private boolean unsavedChanges = false;
 
     JNotepad()
     {
@@ -111,6 +114,25 @@ public class JNotepad
                     System.out.println("File cannot be saved: " + selectedFile);
                 }
             }
+            if (fileChooser.getSelectedFile() == null)
+            {
+                int result = fileChooser.showSaveDialog(frame);
+                if (result == JFileChooser.APPROVE_OPTION)
+                {
+                    try 
+                    {
+                        FileWriter fileWriter = new FileWriter(selectedFile);
+                        fileWriter.write(text.getText());
+                        fileWriter.close();
+                        JOptionPane.showMessageDialog(frame, "File saved successfully!");
+                    } 
+                    catch (IOException e) 
+                    {
+                        JOptionPane.showMessageDialog(frame, "Error saving file: " + e.getMessage());
+                        System.out.println("File cannot be saved: " + selectedFile);
+                    }
+                }
+            }
         });
 
         //-------------------------------
@@ -160,7 +182,38 @@ public class JNotepad
         //-------------------------------
 
         JMenuItem exitMenuItem = new JMenuItem("Exit", KeyEvent.VK_X);
-        exitMenuItem.addActionListener((ae) -> System.exit(0));
+        exitMenuItem.addActionListener((ae) -> 
+        {
+            if (fileChooser.getSelectedFile() == null && unsavedChanges == false)
+            {
+                int exitWithoutSaving = JOptionPane.showConfirmDialog(frame,"Do you want to save changes to this document before exiting?", "Confirm Save Changes", JOptionPane.YES_NO_CANCEL_OPTION);
+                if (exitWithoutSaving == JOptionPane.YES_OPTION)
+                {
+                    int result = fileChooser.showSaveDialog(frame);
+                    if (result == JFileChooser.APPROVE_OPTION)
+                    {
+                        try 
+                        {
+                            FileWriter fileWriter = new FileWriter(selectedFile);
+                            fileWriter.write(text.getText());
+                            fileWriter.close();
+                            JOptionPane.showMessageDialog(frame, "File saved successfully!");
+                        } 
+                        catch (IOException e) 
+                        {
+                            JOptionPane.showMessageDialog(frame, "Error saving file: " + e.getMessage());
+                            System.out.println("File cannot be saved: " + selectedFile);
+                        }
+                    }
+                }
+                if (exitWithoutSaving == JOptionPane.NO_OPTION)
+                {
+                    System.exit(0);
+                }
+                return;
+            }
+            System.exit(0);
+        });
 
         fileMenu.add(newMenuItem);
         fileMenu.add(openMenuItem);
