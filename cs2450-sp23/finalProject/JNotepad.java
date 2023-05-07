@@ -30,13 +30,25 @@ public class JNotepad
     private JFrame frame;
     JTextArea text;
     JMenuBar menubar;
-    private String selectedFile;
+    private File selectedFile;
     private JPopupMenu editPopup;
-    private boolean unsavedChanges = false;
+    private boolean unsavedChanges = true;
+    JFileChooser fileChooser;
+    int count;
 
     JNotepad()
     {
-        frame = new JFrame("JNotepad");
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Desktop"));
+        selectedFile = new File("Untitled");
+        count = 1;
+        while (selectedFile.exists())
+        {
+            selectedFile = new File("Untitled" + count);
+            count++;
+        }
+
+        frame = new JFrame(selectedFile.getName() + " - JNotepad");
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setIconImage(new ImageIcon("JNotepad.png").getImage());
@@ -72,19 +84,20 @@ public class JNotepad
         JMenuItem openMenuItem = new JMenuItem("Open...", KeyEvent.VK_O);
         openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new JavaFileFilter());
         openMenuItem.addActionListener((ae) ->
         {
-            int result = fileChooser.showOpenDialog(frame);
-            if (result == JFileChooser.APPROVE_OPTION)
+            int openFile = fileChooser.showOpenDialog(frame);
+            if (openFile == JFileChooser.APPROVE_OPTION)
             {
-                selectedFile = fileChooser.getSelectedFile().getPath();
+                
+                selectedFile = fileChooser.getSelectedFile();
                 try 
                 {
                     FileReader fileReader = new FileReader(selectedFile);
                     text.read(fileReader, null);
                     fileReader.close();
+                    frame.setTitle(selectedFile.getName() + " - JNotepad");
                 }
                 catch (IOException e) 
                 {
@@ -99,7 +112,7 @@ public class JNotepad
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         saveMenuItem.addActionListener((ae) ->
         {
-            if (selectedFile != null)
+            if (selectedFile.getName() != "Untitled" || selectedFile.getName() != "Untitled" + count)
             {
                 try
                 {
@@ -107,6 +120,7 @@ public class JNotepad
                     fileWriter.write(text.getText());
                     fileWriter.close();
                     JOptionPane.showMessageDialog(frame, "File saved successfully!");
+                    unsavedChanges = false;
                 } 
                 catch (IOException e) 
                 {
@@ -114,17 +128,19 @@ public class JNotepad
                     System.out.println("File cannot be saved: " + selectedFile);
                 }
             }
-            if (fileChooser.getSelectedFile() == null)
+            if (selectedFile.getName() == "Untitled" || selectedFile.getName() == "Untitled" + count)
             {
-                int result = fileChooser.showSaveDialog(frame);
-                if (result == JFileChooser.APPROVE_OPTION)
+                int saveChanges = fileChooser.showSaveDialog(frame);
+                if (saveChanges == JFileChooser.APPROVE_OPTION)
                 {
                     try 
                     {
-                        FileWriter fileWriter = new FileWriter(selectedFile);
+                        FileWriter fileWriter = new FileWriter(selectedFile + ".txt");
                         fileWriter.write(text.getText());
                         fileWriter.close();
                         JOptionPane.showMessageDialog(frame, "File saved successfully!");
+                        frame.setTitle(selectedFile.getName().replace(".txt", "") + " - JNotepad");
+                        unsavedChanges = false;
                     } 
                     catch (IOException e) 
                     {
@@ -140,8 +156,8 @@ public class JNotepad
         JMenuItem saveAsMenuItem = new JMenuItem("Save As...", KeyEvent.VK_A);
         saveAsMenuItem.addActionListener((ae) ->
         {
-            int result = fileChooser.showSaveDialog(frame);
-            if (result == JFileChooser.APPROVE_OPTION)
+            int saveChanges = fileChooser.showSaveDialog(frame);
+            if (saveChanges == JFileChooser.APPROVE_OPTION)
             {
                 try 
                 {
@@ -149,6 +165,8 @@ public class JNotepad
                     fileWriter.write(text.getText());
                     fileWriter.close();
                     JOptionPane.showMessageDialog(frame, "File saved successfully!");
+                    frame.setTitle(selectedFile.getName().replace(".txt", "") + " - JNotepad");
+                    unsavedChanges = false;
                 } 
                 catch (IOException e) 
                 {
@@ -185,10 +203,10 @@ public class JNotepad
         exitMenuItem.addActionListener((ae) -> System.exit(0));
         exitMenuItem.addActionListener((ae) -> 
         {
-            if (fileChooser.getSelectedFile() == null && unsavedChanges == false)
+            if (unsavedChanges)
             {
-                int exitWithoutSaving = JOptionPane.showConfirmDialog(frame,"Do you want to save changes to this document before exiting?", "Confirm Save Changes", JOptionPane.YES_NO_CANCEL_OPTION);
-                if (exitWithoutSaving == JOptionPane.YES_OPTION)
+                int saveChanges = JOptionPane.showConfirmDialog(frame,"Do you want to save changes to this document before exiting?", "Confirm Save Changes", JOptionPane.YES_NO_CANCEL_OPTION);
+                if (saveChanges == JOptionPane.YES_OPTION)
                 {
                     int result = fileChooser.showSaveDialog(frame);
                     if (result == JFileChooser.APPROVE_OPTION)
@@ -199,6 +217,7 @@ public class JNotepad
                             fileWriter.write(text.getText());
                             fileWriter.close();
                             JOptionPane.showMessageDialog(frame, "File saved successfully!");
+                            unsavedChanges = false;
                         } 
                         catch (IOException e) 
                         {
@@ -207,14 +226,13 @@ public class JNotepad
                         }
                     }
                 }
-                if (exitWithoutSaving == JOptionPane.NO_OPTION)
+                if (saveChanges == JOptionPane.NO_OPTION)
                 {
                     System.exit(0);
                 }
                 return;
             }
         });
-        exitMenuItem.addActionListener((ae) -> System.exit(0));
 
         fileMenu.add(newMenuItem);
         fileMenu.add(openMenuItem);
@@ -449,6 +467,26 @@ public class JNotepad
         editPopup.add(cutPopup);
         editPopup.add(copyPopup);
         editPopup.add(pastePopup);
+
+        text.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) 
+            {
+                unsavedChanges = true;
+            }
+        
+            @Override
+            public void removeUpdate(DocumentEvent e) 
+            {
+                unsavedChanges = true;
+            }
+        
+            @Override
+            public void changedUpdate(DocumentEvent e) 
+            {
+                unsavedChanges = true;
+            }
+        });
 
         editPopup.addPopupMenuListener(new PopupMenuListener() 
         {
