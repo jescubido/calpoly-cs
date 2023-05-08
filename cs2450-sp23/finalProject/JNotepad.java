@@ -39,7 +39,7 @@ public class JNotepad
     JNotepad()
     {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Desktop"));
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Downloads"));
         selectedFile = new File("Untitled");
         count = 1;
         while (selectedFile.exists())
@@ -112,42 +112,32 @@ public class JNotepad
         // for MacOS use: newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         saveMenuItem.addActionListener((ae) ->
         {
-            if (selectedFile.getName() != "Untitled" || selectedFile.getName() != "Untitled" + count)
+            if (selectedFile.getName().equals("Untitled") || selectedFile.getName().equals("Untitled" + count))
             {
-                try
-                {
-                    FileWriter fileWriter = new FileWriter(selectedFile);
-                    fileWriter.write(text.getText());
-                    fileWriter.close();
-                    JOptionPane.showMessageDialog(frame, "File saved successfully!");
-                    unsavedChanges = false;
-                } 
-                catch (IOException e) 
-                {
-                    JOptionPane.showMessageDialog(frame, "Error saving file: " + e.getMessage());
-                    System.out.println("File cannot be saved: " + selectedFile);
-                }
-            }
-            if (selectedFile.getName() == "Untitled" || selectedFile.getName() == "Untitled" + count)
-            {
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Downloads"));
                 int saveChanges = fileChooser.showSaveDialog(frame);
                 if (saveChanges == JFileChooser.APPROVE_OPTION)
                 {
-                    try 
-                    {
-                        FileWriter fileWriter = new FileWriter(selectedFile + ".txt");
-                        fileWriter.write(text.getText());
-                        fileWriter.close();
-                        JOptionPane.showMessageDialog(frame, "File saved successfully!");
-                        frame.setTitle(selectedFile.getName().replace(".txt", "") + " - JNotepad");
-                        unsavedChanges = false;
-                    } 
-                    catch (IOException e) 
-                    {
-                        JOptionPane.showMessageDialog(frame, "Error saving file: " + e.getMessage());
-                        System.out.println("File cannot be saved: " + selectedFile);
-                    }
+                    selectedFile = fileChooser.getSelectedFile();
+                    JOptionPane.showMessageDialog(frame, "File saved successfully!");
+                    frame.setTitle(selectedFile.getName().replace(".txt", "") + " - JNotepad");
                 }
+                return;
+            }
+            try 
+            {
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Downloads"));
+                FileWriter fileWriter = new FileWriter(selectedFile + ".txt");
+                fileWriter.write(text.getText());
+                fileWriter.close();
+                JOptionPane.showMessageDialog(frame, "File saved successfully!");
+                frame.setTitle(selectedFile.getName().replace(".txt", "") + " - JNotepad");
+                unsavedChanges = false;
+            } 
+            catch (IOException e) 
+            {
+                JOptionPane.showMessageDialog(frame, "Error saving file: " + e.getMessage());
+                System.out.println("File cannot be saved: " + selectedFile);
             }
         });
 
@@ -161,7 +151,7 @@ public class JNotepad
             {
                 try 
                 {
-                    FileWriter fileWriter = new FileWriter(selectedFile);
+                    FileWriter fileWriter = new FileWriter(selectedFile + ".txt");
                     fileWriter.write(text.getText());
                     fileWriter.close();
                     JOptionPane.showMessageDialog(frame, "File saved successfully!");
