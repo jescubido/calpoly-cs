@@ -1,3 +1,0 @@
-
-Percentages of various characters: 
-a 21%;	e 13%;	i 15%;	o 15%;	u 2%;	consonants 94%;	punct 5%
