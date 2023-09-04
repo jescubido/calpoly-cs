@@ -20,8 +20,24 @@ def exitCommand():
     print("\nBrought to you by Jarisse Escubido. Thank you!")
     exit()
 
+#function for viewing tasks
+def viewTasks():
+    clearScreen()
+    if len(tasks) == 0:
+        print("You have no tasks to complete! Yay!")
+        reprompt()
+    else:
+        #lines below work to mark if task is completed by appending an x, or space if incomplete.
+        sortedTasks = sorted(tasks, key=lambda x: x["deadline"])
+        for i, taskInfo in enumerate(sortedTasks, start=1):
+            task = taskInfo["task"]
+            deadline = taskInfo["deadline"].strftime("%m/%d")
+            completed = "x" if taskInfo["completed"] else " "
+            print(f"[{completed}] {i}. {task}, DUE: {deadline}")
+
 #function for adding new tasks to To Do List
 def addTask():
+    viewTasks()
     task = input("Enter new task: ")
     dateInquiry = input("Does this task have a deadline? (y/n): ")[0]
     if (dateInquiry == 'y' or dateInquiry == 'Y'):
@@ -37,7 +53,6 @@ def addTask():
                     indexToInsert = i + 1
                 else:
                     break
-            #trying to append newTask to the txt file, still work in progress
             tasks.insert(indexToInsert, newTask)
             print("\nTask added!")
             viewTasks()
@@ -53,21 +68,6 @@ def addTask():
     else:
         print("Invalid input! Task cannot be added. Please try again later.")
         reprompt()
-#function for viewing tasks
-def viewTasks():
-    clearScreen()
-    if len(tasks) == 0:
-        print("You have no tasks to complete! Yay!")
-        reprompt()
-    else:
-        #lines below work to mark if task is completed by appending an x
-            #was working before finding how to do read/write code
-        sortedTasks = sorted(tasks, key=lambda x: x["deadline"])
-        for i, taskInfo in enumerate(sortedTasks, start=1):
-            task = taskInfo["task"]
-            deadline = taskInfo["deadline"].strftime("%m/%d")
-            completed = "x" if taskInfo["completed"] else " "
-            print(f"[{completed}] {i}. {task}, DUE: {deadline}")
 
 #function for marking completed tasks
 def markCompleted():
@@ -81,8 +81,9 @@ def markCompleted():
         print("Invalid input!")
         reprompt()
 
-#functino for removing tasks from To Do List
+#function for removing tasks from To Do List
 def removeTask():
+    viewTasks()
     taskNum = int(input("Enter task number to be removed: ")) - 1
     if 0 <= taskNum < len(tasks):
         taskToRemove = tasks.pop(taskNum)
@@ -96,9 +97,11 @@ def removeTask():
 def printMenu():
     print("[1]View tasks \n[2]Exit")
 
+#function for printing task menu options
 def viewTaskMenu():
     print("\n[1]Add new task \n[2]Mark task completed \n[3]Remove task \n[4]Exit")
 
+#function for getting the input for task menu options
 def viewInput():
     while True:
         try:
@@ -117,6 +120,7 @@ def viewInput():
     elif viewSelection == 4:
         exitCommand()
 
+#function that gets the input for menu options
 def menuInput():
     while True:
         try:
@@ -132,6 +136,7 @@ def menuInput():
     elif menuSelection == 2:
         exitCommand()
 
+#function that reprompts the user
 def reprompt():
     question = input("Would you like to do something else? (y/n): ")[0]
     if (question == 'y' or question == 'Y'):
@@ -143,5 +148,6 @@ def reprompt():
         print("Invalid input! Please try again later.")
         exitCommand()
 
+#program initially prints the menu options
 printMenu()
 menuInput()
