@@ -1,3 +1,7 @@
+/*
+ * @author Jarisse Escubido
+ */
+
 public class SingleChoiceQuestion extends Question{
 
     /*
@@ -6,12 +10,14 @@ public class SingleChoiceQuestion extends Question{
      * answerList must only contain one correct answer.
      */
     @Override
-    public void addChoices(String choices, boolean correctAnswer) {
-        this.choicesList.add(choices);
-        if(correctAnswer)
-            this.answerList.add(choices);
-        else
+    public void addSelections(String selections, boolean correctAnswer) {
+        this.selections.add(selections);
+        if(correctAnswer && answers.isEmpty()) {
+            this.answers.add(selections);
+        }
+        else if (correctAnswer && !answers.isEmpty()) {
             System.out.println("Error: single choice question must have only one answer!");
+        }
     }
     
 }

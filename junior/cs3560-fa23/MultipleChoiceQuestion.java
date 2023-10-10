@@ -1,15 +1,19 @@
+/*
+ * @author Jarisse Escubido
+ */
+
 public class MultipleChoiceQuestion extends Question {
 
     /*
-     * MultipleChoiceQuestion extends Question class to include questions that require
+     * MultipleSelectionQuestion extends Question class to include questions that require
      * multiple answers.
-     * Adds the choices to a list.
+     * Adds the selections to a list.
      */
     @Override
-    public void addChoices(String choices, boolean correctAnswer) {
-        this.choicesList.add(choices);
+    public void addSelections(String selections, boolean correctAnswer) {
+        this.selections.add(selections);
         if(correctAnswer)
-            this.answerList.add(choices);
+            this.answers.add(selections);
     }
     
 }

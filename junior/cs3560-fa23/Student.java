@@ -1,11 +1,19 @@
 import java.util.*;
 
+/*
+ * @author Jarisse Escubido
+ */
+
 public class Student {
     private String studentID = UUID.randomUUID().toString();
     private List<String> answers = new ArrayList<String>();
 
     public void setStudentID(String studentID) {
         this.studentID = studentID;
+    }
+
+    public Student() {
+        setStudentID(studentID);
     }
 
     /*
