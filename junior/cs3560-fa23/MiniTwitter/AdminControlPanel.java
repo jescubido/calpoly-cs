@@ -12,22 +12,17 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.List;
 import java.util.ArrayList;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.*;
 
 
-public class AdminControlPanel extends JFrame{
+public class AdminControlPanel extends JFrame implements Visitable {
+    
+    private static Group group = new Group();
+    private static List<String> users = new ArrayList<>();
+    static List<String> groups = new ArrayList<>();
+    private Analytics analytics = new Analytics();
 
-    int numOfTweets = 0;
-    int numOfGroups = 0;
-    int numOfUsers = 0;
-    int positvePerc = 0;
-    private JTree tree = new JTree();
-    private List<String> groupNames = new ArrayList<String>();
-    private List<String> userNames = new ArrayList<String>();
-    private List<User> users = new ArrayList<User>();
-
-    private static AdminControlPanel instance;
+    private static AdminControlPanel instance = new AdminControlPanel();
         
     public static AdminControlPanel getInstance() {
         if(instance == null) {
@@ -35,6 +30,10 @@ public class AdminControlPanel extends JFrame{
         }
         return instance;
     }
+
+    public DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+	DefaultTreeModel treeModel = new DefaultTreeModel(root);
+	JTree tree = new JTree(treeModel);
     
     AdminControlPanel() {
        
@@ -47,8 +46,11 @@ public class AdminControlPanel extends JFrame{
         /*
          * Initialize Tree Model
          */
-        tree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode("Root")));
+        TreeSelectionModel treeSelection = tree.getSelectionModel();
+        treeSelection.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         JScrollPane scrollpane = new JScrollPane(tree);
+
+        treeModel.reload(root);
 
         /*
          * Top JPanel contains: userIdTextArea, addUserButton, groupIDTextArea, addGroupButton
@@ -58,57 +60,60 @@ public class AdminControlPanel extends JFrame{
 
         JButton addUserButton = new JButton("Add User");
         addUserButton.addActionListener((ae -> {
-            DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-             if (userIDTextArea.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(null, "No Username Entered", "Message", JOptionPane.INFORMATION_MESSAGE);
-            } 
-            else{
-                model.insertNodeInto(new DefaultMutableTreeNode(userIDTextArea.getText()), selectedNode, selectedNode.getChildCount());  
-                userNames.add(userIDTextArea.getText());
-                userIDTextArea.setText("");
-                numOfUsers++;
-            }
+            
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+            String userid = userIDTextArea.getText();
+
+            if(userid.isEmpty() || node == null){
+	        	JOptionPane.showMessageDialog(frame, "Please enter a User ID or select a parent node!");
+	        }
+	        
+	        else if(users.contains(userid)){
+	        	JOptionPane.showMessageDialog(frame, "This user is already added!");
+	        }
+	        
+	        else{
+	        	if(node != root)	        	
+	        		root = node;	        			  
+	        	
+	        	User user = new User();
+	        	user.add(root, userid);
+	        	
+	        	users.add(userid);
+	        	user.accept(analytics);
+        		userIDTextArea.setText("");
+	        }	        	      	
+
+			treeModel.reload(root);
         }));
 
         JTextField groupIDTextArea = new JTextField();
         JButton addGroupButton = new JButton("Add Group");
         addGroupButton.addActionListener((ae -> {
-            if (groupIDTextArea.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(null, "No Group name Entered", "Message", JOptionPane.INFORMATION_MESSAGE);
-            } 
-            else {
-                User nUser = new User(groupIDTextArea.getText());
-                users.add(nUser);
-                DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-                DefaultMutableTreeNode newUser = new DefaultMutableTreeNode(groupIDTextArea.getText());
-
-                if (groupNames.contains(groupIDTextArea.getText())) {
-                    JOptionPane.showMessageDialog(null, "Group already exists", "Message", JOptionPane.INFORMATION_MESSAGE);
-                } 
-                else {
-                    if (selectedNode != null) {
-                        if (!groupIDTextArea.getText().trim().equals("")) {
-                            model.insertNodeInto(newUser, selectedNode, selectedNode.getChildCount());
-                            model.reload();
-                            model.reload();
-                            groupIDTextArea.setText("");
-                            numOfGroups++;
-                        }
-                    } else {
-                        selectedNode = (DefaultMutableTreeNode) model.getRoot();
-                        if (!groupIDTextArea.getText().trim().equals("")) {
-                            model.insertNodeInto(newUser, selectedNode, selectedNode.getChildCount());
-                            newUser = (DefaultMutableTreeNode) model.getRoot();
-                            groupIDTextArea.setText("");
-                            model.reload();
-                            numOfGroups++;
-                        }
-                    }
-                }
-                groupNames.add(groupIDTextArea.getText());
+            
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+            String groupid = groupIDTextArea.getText();
+            groups.add(root.toString());
+            
+            if(groupid.isEmpty() || node == null){
+            JOptionPane.showMessageDialog(frame, "Please enter a Group ID or select a parent node!");
             }
+            
+            else if(groups.contains(groupid)){
+            JOptionPane.showMessageDialog(frame, "This ID already exists");
+            }
+
+            else{
+                if(node != root){
+                    root = node;
+                }
+                
+                DefaultMutableTreeNode subroot = new DefaultMutableTreeNode(groupid);
+                group.add(treeModel, root, subroot);
+                groupIDTextArea.setText("");
+                accept(analytics);
+                treeModel.reload(root);
+                }
         }));
 
         topPanel.add(userIDTextArea);
@@ -118,8 +123,15 @@ public class AdminControlPanel extends JFrame{
 
         JButton openUserViewButton = new JButton("Open User View");
         openUserViewButton.addActionListener((ae -> {
-            String username = "Mini Twitter - " + tree.getLastSelectedPathComponent().toString();
-            UserView.showDialog(instance, username);
+
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+			if(node == null){
+				JOptionPane.showMessageDialog(frame, "Please select a User!");
+			}
+			else{
+                String username = "Mini Twitter - " + tree.getLastSelectedPathComponent().toString();
+			    UserView.showDialog(frame, username);
+			}
         }));
 
         /*
@@ -129,22 +141,26 @@ public class AdminControlPanel extends JFrame{
         JPanel bottomPanel = new JPanel(new GridLayout(2,2));
         JButton showUserTotalButton = new JButton("Show User Total");
         showUserTotalButton.addActionListener((ae -> {
+            int numOfUsers = analytics.getUserTotal();
             JOptionPane.showMessageDialog(null,"Total Number of Users: " + numOfUsers);
         }));
 
         JButton showGroupTotalButton = new JButton("Show Group Total");
         showGroupTotalButton.addActionListener((ae -> {
+            int numOfGroups = analytics.getGroupTotal();
             JOptionPane.showMessageDialog(null,"Total Number of Groups: " + numOfGroups);
         }));
 
         JButton showMessagesTotalButton = new JButton("Show Messages Total");
         showMessagesTotalButton.addActionListener((ae -> {
+            int numOfTweets = analytics.getTweetTotal();
             JOptionPane.showMessageDialog(null,"Total Number of Tweets: " + numOfTweets);
         }));
 
         JButton showPositivePercentageButton = new JButton("Show Positive Percentage");
         showPositivePercentageButton.addActionListener((ae -> {
-            JOptionPane.showMessageDialog(null,"Total Percent of Positive Tweets: " + positvePerc + "%");
+            int positivePerc = analytics.getPositivePercentage();
+            JOptionPane.showMessageDialog(null,"Total Percent of Positive Tweets: " + positivePerc + "%");
         }));
 
         bottomPanel.add(showUserTotalButton);
@@ -170,5 +186,10 @@ public class AdminControlPanel extends JFrame{
          */
         frame.add(splitpane);
         frame.setVisible(true);
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 }

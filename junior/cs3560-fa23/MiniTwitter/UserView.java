@@ -1,18 +1,28 @@
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class UserView extends JDialog {
+public class UserView implements Observer, Visitable {
     
-    private static JTree tree;
-    public static List<User> users = new ArrayList<User>();
-    private static List<String> userNames = new ArrayList<String>();
+    private String username;
+    private String userTweet;
+
+    private static JList<String> currentFollowing;
+    private static JList<String> newsFeed;
+    private static DefaultListModel<String> followings = new DefaultListModel<String>();
+	private static DefaultListModel<String> tweets = new DefaultListModel<String>();
+    private static User user = new User();
+    private Analytics analytics = new Analytics();
+
 
     public static void showDialog(JFrame parent, String username) {
 
@@ -26,22 +36,15 @@ public class UserView extends JDialog {
 
         JButton addUserButton = new JButton("Follow User");
         addUserButton.addActionListener((ae -> {
-            User nUser = new User(userIDTextField.getText());
-            users.add(nUser);
-            DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-            DefaultMutableTreeNode newUser = new DefaultMutableTreeNode(userIDTextField.getText());
-
-            if (userNames.contains(userIDTextField.getText())) {
-				JOptionPane.showMessageDialog(null, "No Username Entered", "Message", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                selectedNode = (DefaultMutableTreeNode) model.getRoot();
-                if (!userIDTextField.getText().trim().equals("")) {
-                    model.insertNodeInto(newUser, selectedNode, selectedNode.getChildCount());
-                    model.reload();
-                }
-            }
-            userNames.add(userIDTextField.getText());
+            String userid = userIDTextField.getText();
+			if(AdminControlPanel.groups.contains(userid)){
+				followings.addElement(userid);
+				userIDTextField.setText("");
+				user.addFollowing(userid);
+			}
+			else{
+				JOptionPane.showMessageDialog(dlg, "User does not exist");
+			}
         }));
 
         topAddUserPanel.add(userIDTextField);
@@ -58,16 +61,32 @@ public class UserView extends JDialog {
         JTextArea tweetTextArea = new JTextArea();
         tweetTextArea.setLineWrap(true);
         tweetTextArea.setWrapStyleWord(true);
+
         JButton postTweetButton = new JButton("Post Tweet");
+        postTweetButton.addActionListener((ae -> {
+            String message = tweetTextArea.getText();
+            accept(analytics);
+			String usertweet = username + ": " + message;
+			tweets.addElement(usertweet);
+			tweetTextArea.setText("");
+			user.postTweets(message);
+        }));
+
         bottomTweetPanel.add(tweetTextArea);
         bottomTweetPanel.add(postTweetButton);
 
-        JTextArea newsFeed = new JTextArea("News Feed:\n");
-        newsFeed.setEditable(false);
+        JTextArea newsFeedTextArea = new JTextArea("News Feed:\n");
+        newsFeedTextArea.setEditable(false);
+
+        currentFollowing = new JList<String> (followings);	
+        JScrollPane followScrollPane = new JScrollPane(currentFollowing);
+
+	    newsFeed = new JList<String>(tweets);
+        JScrollPane newScrollPane = new JScrollPane(newsFeed);
 
         JPanel bottomPanel = new JPanel(new GridLayout(0,1));
         bottomPanel.add(bottomTweetPanel);
-        bottomPanel.add(newsFeed);
+        bottomPanel.add(newsFeedTextArea);
 
         JPanel panel = new JPanel(new GridLayout(0,1));
         panel.add(topPanel);
@@ -76,5 +95,23 @@ public class UserView extends JDialog {
         dlg.add(panel);
         dlg.setLocationRelativeTo(null);
 		dlg.setVisible(true);
+    }
+
+    public void post(String message){
+		tweets.addElement(message);
+	}
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(arg instanceof String){
+			userTweet = (String) arg;
+			post(userTweet);
+        }
     }
 }
