@@ -21,8 +21,10 @@ public class UserView implements Observer, Visitable {
 
     private static JList<String> currentFollowing;
     private static JList<String> newsFeed;
+    
     private static DefaultListModel<String> followings = new DefaultListModel<String>();
 	private static DefaultListModel<String> tweets = new DefaultListModel<String>();
+    String newsFeedLabel = "News Feed:\n";
 
     private PositiveTweets posTweets = new PositiveTweets();
     private static User user = new User();
@@ -32,10 +34,10 @@ public class UserView implements Observer, Visitable {
         this.username = name;
     }
 
-    public static void showDialog(JFrame parent, String username) {
+    public static void showDialog(JFrame parent, String title, String username) {
 
         // Initialize Dialog frame
-        JDialog dlg = new JDialog(parent, username , false);
+        JDialog dlg = new JDialog(parent, title, false);
 		dlg.setSize(550, 350);
 		dlg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -60,18 +62,13 @@ public class UserView implements Observer, Visitable {
 
         topAddUserPanel.add(userIDTextField);
         topAddUserPanel.add(addUserButton);
-
-        JPanel currentFollowingPanel = new JPanel();
-        JLabel currentFollowingLabel = new JLabel("Current Following:\n");
+      
         currentFollowing = new JList<String> (followings);	
         JScrollPane followScrollPane = new JScrollPane(currentFollowing);
 
-        currentFollowingPanel.add(currentFollowingLabel);
-        currentFollowingPanel.add(followScrollPane);
-
         JPanel topPanel = new JPanel(new GridLayout(0,1));
         topPanel.add(topAddUserPanel);
-        topPanel.add(currentFollowingPanel);
+        topPanel.add(followScrollPane);
 
         /*
          * Bottom Panel contains: posting a tweet and news feed.
@@ -94,14 +91,11 @@ public class UserView implements Observer, Visitable {
         bottomTweetPanel.add(tweetTextArea);
         bottomTweetPanel.add(postTweetButton);
 
-        JLabel newsFeedLabel = new JLabel("News Feed:\n");
-
 	    newsFeed = new JList<String>(tweets);
         JScrollPane newScrollPane = new JScrollPane(newsFeed);
 
         JPanel bottomPanel = new JPanel(new GridLayout(0,1));
         bottomPanel.add(bottomTweetPanel);
-        bottomPanel.add(newsFeedLabel);
         bottomPanel.add(newScrollPane);
 
         JPanel panel = new JPanel(new GridLayout(0,1));

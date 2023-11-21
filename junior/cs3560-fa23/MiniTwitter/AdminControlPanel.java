@@ -143,8 +143,9 @@ public class AdminControlPanel extends JFrame implements Visitable {
 				JOptionPane.showMessageDialog(frame, "Please select a User!");
 			}
 			else{
-                String username = "Mini Twitter - " + tree.getLastSelectedPathComponent().toString();
-			    UserView.showDialog(frame, username);
+                String username = tree.getLastSelectedPathComponent().toString();
+                String title = "Mini Twitter - " + username;
+			    UserView.showDialog(frame, title, username);
 			}
         }));
 
