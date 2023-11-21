@@ -11,17 +11,21 @@
 import java.awt.*;
 import javax.swing.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.ArrayList;
 import javax.swing.tree.*;
 
-
 public class AdminControlPanel extends JFrame implements Visitable {
     
-    private static Group group = new Group();
-    private static List<String> users = new ArrayList<>();
+    private Group group = new Group();
+    static List<String> users = new ArrayList<>();
     static List<String> groups = new ArrayList<>();
     private Analytics analytics = new Analytics();
 
+    /*
+    * Implementation of Singleton pattern.
+    */
     private static AdminControlPanel instance = new AdminControlPanel();
         
     public static AdminControlPanel getInstance() {
@@ -31,6 +35,11 @@ public class AdminControlPanel extends JFrame implements Visitable {
         return instance;
     }
 
+
+    /*
+     * Initialize tree model.
+     * Implementation of Composite pattern.
+     */
     public DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
 	DefaultTreeModel treeModel = new DefaultTreeModel(root);
 	JTree tree = new JTree(treeModel);
@@ -43,9 +52,6 @@ public class AdminControlPanel extends JFrame implements Visitable {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        /*
-         * Initialize Tree Model
-         */
         TreeSelectionModel treeSelection = tree.getSelectionModel();
         treeSelection.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         JScrollPane scrollpane = new JScrollPane(tree);
@@ -58,6 +64,9 @@ public class AdminControlPanel extends JFrame implements Visitable {
         JPanel topPanel = new JPanel(new GridLayout(2, 2));
         JTextField userIDTextArea = new JTextField();
 
+        /*
+         * User Button adds a new user to tree.
+         */
         JButton addUserButton = new JButton("Add User");
         addUserButton.addActionListener((ae -> {
             
@@ -87,6 +96,9 @@ public class AdminControlPanel extends JFrame implements Visitable {
 			treeModel.reload(root);
         }));
 
+        /*
+         * Group Button creates new group to add to tree model.
+         */
         JTextField groupIDTextArea = new JTextField();
         JButton addGroupButton = new JButton("Add Group");
         addGroupButton.addActionListener((ae -> {
@@ -107,20 +119,22 @@ public class AdminControlPanel extends JFrame implements Visitable {
                 if(node != root){
                     root = node;
                 }
-                
-                DefaultMutableTreeNode subroot = new DefaultMutableTreeNode(groupid);
-                group.add(treeModel, root, subroot);
-                groupIDTextArea.setText("");
-                accept(analytics);
-                treeModel.reload(root);
-                }
-        }));
 
+            DefaultMutableTreeNode subroot = new DefaultMutableTreeNode(groupid);
+            group.add(treeModel, root, subroot);
+            groupIDTextArea.setText("");
+            accept(analytics);
+            treeModel.reload(root);
+            }
+        }));
         topPanel.add(userIDTextArea);
         topPanel.add(addUserButton);
         topPanel.add(groupIDTextArea);
         topPanel.add(addGroupButton);
 
+        /*
+         * Open User View Button opens new dialog window of each user.
+         */
         JButton openUserViewButton = new JButton("Open User View");
         openUserViewButton.addActionListener((ae -> {
 
@@ -139,30 +153,46 @@ public class AdminControlPanel extends JFrame implements Visitable {
          * showMessagesTotalButton, showPositivePercentageButton
          */
         JPanel bottomPanel = new JPanel(new GridLayout(2,2));
+
+        /*
+         * Displays message dialog of the total number of users.
+         */
         JButton showUserTotalButton = new JButton("Show User Total");
         showUserTotalButton.addActionListener((ae -> {
             int numOfUsers = analytics.getUserTotal();
             JOptionPane.showMessageDialog(null,"Total Number of Users: " + numOfUsers);
         }));
 
+        /*
+         * Displays message dialog of the total number of groups.
+         */
         JButton showGroupTotalButton = new JButton("Show Group Total");
         showGroupTotalButton.addActionListener((ae -> {
             int numOfGroups = analytics.getGroupTotal();
             JOptionPane.showMessageDialog(null,"Total Number of Groups: " + numOfGroups);
         }));
 
+        /*
+         * Displays message dialog of the total number of tweets.
+         */
         JButton showMessagesTotalButton = new JButton("Show Messages Total");
         showMessagesTotalButton.addActionListener((ae -> {
             int numOfTweets = analytics.getTweetTotal();
             JOptionPane.showMessageDialog(null,"Total Number of Tweets: " + numOfTweets);
         }));
 
+        /*
+         * Displays message dialog of the percentage of positive tweets.
+         */
         JButton showPositivePercentageButton = new JButton("Show Positive Percentage");
         showPositivePercentageButton.addActionListener((ae -> {
             int positivePerc = analytics.getPositivePercentage();
             JOptionPane.showMessageDialog(null,"Total Percent of Positive Tweets: " + positivePerc + "%");
         }));
 
+        /*
+         * Add buttons to bottom panel.
+         */
         bottomPanel.add(showUserTotalButton);
         bottomPanel.add(showGroupTotalButton);
         bottomPanel.add(showMessagesTotalButton);

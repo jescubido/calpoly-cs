@@ -1,13 +1,16 @@
+/**
+ * Name: Escubido, Jarisse
+ * Assignment: #2
+ * Due: 14 November 2023
+ * Course: cs-3560-01-fa23
+ * 
+ * Description:
+ *      Implementing a Java-based Mini Twitter with graphical user interface (GUI) using Java Swing.
+ */
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Random;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -20,24 +23,32 @@ public class UserView implements Observer, Visitable {
     private static JList<String> newsFeed;
     private static DefaultListModel<String> followings = new DefaultListModel<String>();
 	private static DefaultListModel<String> tweets = new DefaultListModel<String>();
+
+    private PositiveTweets posTweets = new PositiveTweets();
     private static User user = new User();
     private Analytics analytics = new Analytics();
 
+    public UserView(String name) {
+        this.username = name;
+    }
 
     public static void showDialog(JFrame parent, String username) {
 
-
+        // Initialize Dialog frame
         JDialog dlg = new JDialog(parent, username , false);
 		dlg.setSize(550, 350);
 		dlg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        /*
+         * TopPanel contains: following users and showing list of current following users.
+         */
         JPanel topAddUserPanel = new JPanel(new GridLayout(1,2));
         JTextField userIDTextField = new JTextField();
 
         JButton addUserButton = new JButton("Follow User");
         addUserButton.addActionListener((ae -> {
             String userid = userIDTextField.getText();
-			if(AdminControlPanel.groups.contains(userid)){
+			if(AdminControlPanel.users.contains(userid)){
 				followings.addElement(userid);
 				userIDTextField.setText("");
 				user.addFollowing(userid);
@@ -50,13 +61,21 @@ public class UserView implements Observer, Visitable {
         topAddUserPanel.add(userIDTextField);
         topAddUserPanel.add(addUserButton);
 
-        JTextArea myFeed = new JTextArea("Current Following:\n");
-        myFeed.setEditable(false);
+        JPanel currentFollowingPanel = new JPanel();
+        JLabel currentFollowingLabel = new JLabel("Current Following:\n");
+        currentFollowing = new JList<String> (followings);	
+        JScrollPane followScrollPane = new JScrollPane(currentFollowing);
+
+        currentFollowingPanel.add(currentFollowingLabel);
+        currentFollowingPanel.add(followScrollPane);
 
         JPanel topPanel = new JPanel(new GridLayout(0,1));
         topPanel.add(topAddUserPanel);
-        topPanel.add(myFeed);
+        topPanel.add(currentFollowingPanel);
 
+        /*
+         * Bottom Panel contains: posting a tweet and news feed.
+         */
         JPanel bottomTweetPanel = new JPanel(new GridLayout(1,2));
         JTextArea tweetTextArea = new JTextArea();
         tweetTextArea.setLineWrap(true);
@@ -65,8 +84,8 @@ public class UserView implements Observer, Visitable {
         JButton postTweetButton = new JButton("Post Tweet");
         postTweetButton.addActionListener((ae -> {
             String message = tweetTextArea.getText();
-            accept(analytics);
 			String usertweet = username + ": " + message;
+            //accept(analytics);
 			tweets.addElement(usertweet);
 			tweetTextArea.setText("");
 			user.postTweets(message);
@@ -75,23 +94,23 @@ public class UserView implements Observer, Visitable {
         bottomTweetPanel.add(tweetTextArea);
         bottomTweetPanel.add(postTweetButton);
 
-        JTextArea newsFeedTextArea = new JTextArea("News Feed:\n");
-        newsFeedTextArea.setEditable(false);
-
-        currentFollowing = new JList<String> (followings);	
-        JScrollPane followScrollPane = new JScrollPane(currentFollowing);
+        JLabel newsFeedLabel = new JLabel("News Feed:\n");
 
 	    newsFeed = new JList<String>(tweets);
         JScrollPane newScrollPane = new JScrollPane(newsFeed);
 
         JPanel bottomPanel = new JPanel(new GridLayout(0,1));
         bottomPanel.add(bottomTweetPanel);
-        bottomPanel.add(newsFeedTextArea);
+        bottomPanel.add(newsFeedLabel);
+        bottomPanel.add(newScrollPane);
 
         JPanel panel = new JPanel(new GridLayout(0,1));
         panel.add(topPanel);
         panel.add(bottomPanel);
 
+        /*
+         * Adding content to content pane.
+         */
         dlg.add(panel);
         dlg.setLocationRelativeTo(null);
 		dlg.setVisible(true);

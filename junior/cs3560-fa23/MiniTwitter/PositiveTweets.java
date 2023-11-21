@@ -1,3 +1,13 @@
+/**
+ * Name: Escubido, Jarisse
+ * Assignment: #2
+ * Due: 14 November 2023
+ * Course: cs-3560-01-fa23
+ * 
+ * Description:
+ *      Implementing a Java-based Mini Twitter with graphical user interface (GUI) using Java Swing.
+ */
+
 public class PositiveTweets implements Visitable {
 
     private Analytics analytics = new Analytics();
@@ -7,6 +17,9 @@ public class PositiveTweets implements Visitable {
         visitor.visit(this);
     }
     
+    /*
+     * Determines whethere a tweet contins positive words.
+     */
     public boolean isPositive (String tweet){
 		String message = tweet.toLowerCase();
 		
