@@ -18,6 +18,7 @@ public class Group {
 
     private String groupName;
     private List<String> groupMembers;
+    private long createGroup;
 
     public Group() {
         setGroupID(groupName);
@@ -61,6 +62,20 @@ public class Group {
      */
     public int getGroupSize() {
         return groupMembers.size();
+    }
+
+    /*
+     * Starts time for when object was created.
+     */
+    public void setCreationTime() {
+        createGroup = System.currentTimeMillis();
+    }
+
+    /*
+     * Returns the time when object was created.
+     */
+    public long getCreationTime() {
+        return createGroup;
     }
 
 }

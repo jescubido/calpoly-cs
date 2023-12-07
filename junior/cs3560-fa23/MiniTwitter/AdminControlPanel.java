@@ -77,10 +77,6 @@ public class AdminControlPanel extends JFrame implements Visitable {
 	        	JOptionPane.showMessageDialog(frame, "Please enter a User ID or select a parent node!");
 	        }
 	        
-	        else if(users.contains(userid)){
-	        	JOptionPane.showMessageDialog(frame, "This user is already added!");
-	        }
-	        
 	        else{
 	        	if(node != root)	        	
 	        		root = node;	        			  
@@ -110,10 +106,6 @@ public class AdminControlPanel extends JFrame implements Visitable {
             if(groupid.isEmpty() || node == null){
             JOptionPane.showMessageDialog(frame, "Please enter a Group ID or select a parent node!");
             }
-            
-            else if(groups.contains(groupid)){
-            JOptionPane.showMessageDialog(frame, "This ID already exists");
-            }
 
             else{
                 if(node != root){
@@ -127,10 +119,44 @@ public class AdminControlPanel extends JFrame implements Visitable {
             treeModel.reload(root);
             }
         }));
+
         topPanel.add(userIDTextArea);
         topPanel.add(addUserButton);
         topPanel.add(groupIDTextArea);
         topPanel.add(addGroupButton);
+
+        /*
+         * Validate ID Button validates if all IDs used in users and groups are valid
+         * - All IDs are unique
+         * - All IDs do not contain spaces
+         */
+        JButton validateID = new JButton("Validate IDs");
+        validateID.addActionListener((ae ->
+        {
+            String userid = userIDTextArea.getText();
+            String groupid = groupIDTextArea.getText();
+
+            if(users.contains(userid)){
+	        	JOptionPane.showMessageDialog(frame, "This user already exists!", "Alert", JOptionPane.WARNING_MESSAGE);
+	        }
+            else if(groups.contains(groupid)){
+                JOptionPane.showMessageDialog(frame, "This group already exists!", "Alert", JOptionPane.WARNING_MESSAGE);
+            }
+            else if(groupid.contains(" ") || (userid.contains(" "))){
+                JOptionPane.showMessageDialog(frame, "Invalid ID! May not contain spaces!", "Alert", JOptionPane.WARNING_MESSAGE);
+            }
+        }));
+
+        /*
+         * Last Updated User Button prints the latest user created
+         */
+        JButton lastUpdatedUser = new JButton("Last Updated User");
+        lastUpdatedUser.addActionListener((ae ->
+        {
+            String latestUser = users.get(users.size() - 1);
+
+            JOptionPane.showConfirmDialog(frame, "User's last update: " + latestUser);
+        }));
 
         /*
          * Open User View Button opens new dialog window of each user.

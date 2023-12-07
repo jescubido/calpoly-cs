@@ -18,6 +18,7 @@ public class UserView implements Observer, Visitable {
     
     private String username;
     private String userTweet;
+    private long time;
 
     private static JList<String> currentFollowing;
     private static JList<String> newsFeed;
@@ -81,7 +82,8 @@ public class UserView implements Observer, Visitable {
         JButton postTweetButton = new JButton("Post Tweet");
         postTweetButton.addActionListener((ae -> {
             String message = tweetTextArea.getText();
-			String usertweet = username + ": " + message;
+            long lastUpdatedTime = System.currentTimeMillis();
+			String usertweet =  lastUpdatedTime + username + ": " + message;
             //accept(analytics);
 			tweets.addElement(usertweet);
 			tweetTextArea.setText("");

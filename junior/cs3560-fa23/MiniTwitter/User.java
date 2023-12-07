@@ -20,6 +20,8 @@ public class User extends Observable implements Visitable {
     private List<String> followers;
     private List<String> followings;
     private List<String> tweets;
+    private long createUser;
+    static long lastUpdatedTime = 0;
 
     public User() {
         setUserID(name);
@@ -89,7 +91,8 @@ public class User extends Observable implements Visitable {
     }
 
     public void setTweet(String tweet){
-		this.userTweet = name + ": " + tweet;
+        lastUpdatedTime = System.currentTimeMillis();
+		this.userTweet = lastUpdatedTime + name + ": " + tweet;
 		setChanged();
 		notifyObservers(userTweet);
 	}
@@ -97,5 +100,26 @@ public class User extends Observable implements Visitable {
     @Override
     public void accept(Visitor visitor) {
         visitor.visit(this);
+    }
+
+    /*
+     * Starts time for when object was created.
+     */
+    public void setCreationTime() {
+        createUser = System.currentTimeMillis();
+    }
+
+    /*
+     * Returns the time when object was created.
+     */
+    public long getCreationTime() {
+        return createUser;
+    }
+
+    /*
+     * Returns updated time when new tweet is posted
+     */
+    public static long getLastUpdatedTime() {
+        return lastUpdatedTime;
     }
 }
