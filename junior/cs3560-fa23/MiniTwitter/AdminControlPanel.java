@@ -76,6 +76,14 @@ public class AdminControlPanel extends JFrame implements Visitable {
             if(userid.isEmpty() || node == null){
 	        	JOptionPane.showMessageDialog(frame, "Please enter a User ID or select a parent node!");
 	        }
+
+            if(users.contains(userid)){
+	        	JOptionPane.showMessageDialog(frame, "This user already exists!", "Alert", JOptionPane.WARNING_MESSAGE);
+	        }
+
+            else if(userid.contains(" ")){
+                JOptionPane.showMessageDialog(frame, "Invalid ID! May not contain spaces!", "Alert", JOptionPane.WARNING_MESSAGE);
+            }
 	        
 	        else{
 	        	if(node != root)	        	
@@ -106,6 +114,13 @@ public class AdminControlPanel extends JFrame implements Visitable {
             if(groupid.isEmpty() || node == null){
             JOptionPane.showMessageDialog(frame, "Please enter a Group ID or select a parent node!");
             }
+            
+            else if(groups.contains(groupid)){
+                JOptionPane.showMessageDialog(frame, "This group already exists!", "Alert", JOptionPane.WARNING_MESSAGE);
+            }
+            else if(groupid.contains(" ")) {
+                JOptionPane.showMessageDialog(frame, "Invalid ID! May not contain spaces!", "Alert", JOptionPane.WARNING_MESSAGE);
+            }
 
             else{
                 if(node != root){
@@ -125,6 +140,7 @@ public class AdminControlPanel extends JFrame implements Visitable {
         topPanel.add(groupIDTextArea);
         topPanel.add(addGroupButton);
 
+        JPanel middlePanel = new JPanel(new GridLayout(3, 0));
         /*
          * Validate ID Button validates if all IDs used in users and groups are valid
          * - All IDs are unique
@@ -154,8 +170,7 @@ public class AdminControlPanel extends JFrame implements Visitable {
         lastUpdatedUser.addActionListener((ae ->
         {
             String latestUser = users.get(users.size() - 1);
-
-            JOptionPane.showConfirmDialog(frame, "User's last update: " + latestUser);
+            JOptionPane.showMessageDialog(frame, "User's last update: " + latestUser);
         }));
 
         /*
@@ -174,6 +189,10 @@ public class AdminControlPanel extends JFrame implements Visitable {
 			    UserView.showDialog(frame, title, username);
 			}
         }));
+
+        middlePanel.add(validateID);
+        middlePanel.add(lastUpdatedUser);
+        middlePanel.add(openUserViewButton);
 
         /*
          * Bottom JPanel contains: showUserTotalButton, showGroupTotalButton,
@@ -230,7 +249,7 @@ public class AdminControlPanel extends JFrame implements Visitable {
          */
         JPanel rightPanel = new JPanel(new GridLayout(0,1));
         rightPanel.add(topPanel, BorderLayout.NORTH);
-        rightPanel.add(openUserViewButton, BorderLayout.CENTER);
+        rightPanel.add(middlePanel, BorderLayout.CENTER);
         rightPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         JSplitPane splitpane = new JSplitPane();
