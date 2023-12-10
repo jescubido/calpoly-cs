@@ -11,6 +11,8 @@
 import java.awt.*;
 
 import javax.swing.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -34,6 +36,14 @@ public class UserView implements Observer, Visitable {
     public UserView(String name) {
         this.username = name;
     }
+
+    public static String getFormattedDate() {
+            LocalDateTime date = LocalDateTime.now();
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("HH:mm");
+            String formattedDate = date.format(dateFormat);
+            return formattedDate;
+    
+        }
 
     public static void showDialog(JFrame parent, String title, String username) {
 
@@ -82,8 +92,9 @@ public class UserView implements Observer, Visitable {
         JButton postTweetButton = new JButton("Post Tweet");
         postTweetButton.addActionListener((ae -> {
             String message = tweetTextArea.getText();
-            long lastUpdatedTime = System.currentTimeMillis();
-			String usertweet =  lastUpdatedTime + username + ": " + message;
+            String time = getFormattedDate();
+			String usertweet =  time + " " + username + ": " + message;
+            user.setLastUpdateTime(System.currentTimeMillis());
             //accept(analytics);
 			tweets.addElement(usertweet);
 			tweetTextArea.setText("");

@@ -116,6 +116,10 @@ public class User extends Observable implements Visitable {
         return createUser;
     }
 
+    public void setLastUpdateTime(long lastUpdatedTime) {
+        this.lastUpdatedTime = lastUpdatedTime;
+    }
+
     /*
      * Returns updated time when new tweet is posted
      */

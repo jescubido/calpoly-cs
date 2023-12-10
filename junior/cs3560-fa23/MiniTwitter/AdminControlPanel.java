@@ -161,6 +161,9 @@ public class AdminControlPanel extends JFrame implements Visitable {
             else if(groupid.contains(" ") || (userid.contains(" "))){
                 JOptionPane.showMessageDialog(frame, "Invalid ID! May not contain spaces!", "Alert", JOptionPane.WARNING_MESSAGE);
             }
+            else {
+                JOptionPane.showMessageDialog(frame, "ID is valid!");
+            }
         }));
 
         /*
