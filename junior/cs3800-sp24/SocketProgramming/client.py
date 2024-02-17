@@ -2,7 +2,6 @@ import socket
 
 PORT = 8888
 ip = 'localhost'
-#'192.168.4.40'
 
 c = socket.socket()
 
