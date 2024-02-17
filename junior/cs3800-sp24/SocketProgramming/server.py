@@ -1,32 +1,38 @@
 import socket
 
 PORT = 8888
-localhost = "192.168.4.40"
+ip = 'localhost'
 
 s = socket.socket()
-print("Socket Created")
+print("socket successfully created..")
 
-s.bind(('localhost', PORT))
+s.bind((ip, PORT))
+print("socket successfully binded..")
 
 s.listen(3)
-print("waiting for connections")
+print("server listening..")
 
 while True:
     c, addr = s.accept()
-    name = c.recv(1024).decode()
     
-    print("Connected with ", addr, name)
+    c.send(bytes("Server of Jarisse Escubido\n", 'utf-8'))
 
-    c.send(bytes("Welcome to Jarisse's server.", 'utf-8'))
+    name = c.recv(1024).decode()
+    print("Connected with ", addr, name, "\n")
 
     clientInt = c.recv(1024).decode()
-    serverInt = input("Enter a number between 1 and 100: ")
+    serverInt = 50
+    serverStr = str(serverInt)
+    c.send(bytes(serverStr, 'utf-8'))
+    
+    if not clientInt:
+        c.close()
+        break
 
-    sum = int(clientInt) + int(serverInt)
-    c.send(bytes(str(sum), 'utf-8'))
+    sum = serverInt + int(clientInt)
+    result = str(sum)
 
-    print("Server's Number: ", serverInt)
-    print("Client's Number: ", clientInt)
-    print("Sum = ", sum)
+    c.send(bytes(result, 'utf-8'))
 
+    print("The sum of", clientInt, "and", serverInt, "=", result)
     c.close()

@@ -1,25 +1,29 @@
 import socket
 
 PORT = 8888
-localhost = "192.168.4.40"
+ip = 'localhost'
 
 c = socket.socket()
 
-c.connect(('localhost', PORT))
+c.connect((ip, PORT))
+
+print(c.recv(1024).decode()) #prints welcome message
 
 name = input("Enter your name: ")
 c.send(bytes(name, 'utf-8'))
 
-clientInt = input("Enter a number between 1 and 100: ")
-c.send(bytes(clientInt, 'utf-8'))
+clientInt = input("Enter a number between 1 to 100: ")
 
-print(c.recv(1024).decode())
+if int(clientInt) < 1 or int(clientInt) > 100 or clientInt == None:
+    print("The number entered is out of bounds")
+    c.close()
+        
+else:
+    c.send(bytes(clientInt, 'utf-8'))
 
-serverInt = int(c.recv(1024).decode())
+serverInt = c.recv(1024).decode()
+sum = c.recv(1024).decode()
 
-print("Server's Number: ", serverInt)
-print("Client's Number: ", clientInt)
-
-# TODO: print sum of client and server's numbers
+print("The sum of", clientInt, "and", serverInt, "is", sum)
 
 c.close()
